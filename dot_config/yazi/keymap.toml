@@ -1,2 +1,0 @@
-[keys.normal]
-I = "shell --block imv \"$@\""
