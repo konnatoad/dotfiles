@@ -50,6 +50,12 @@ source ~/.zprofile
 # Apply dotfiles
 chezmoi apply -R || error "Failed to apply dotfiles"
 
+# Install pacman packages
+if [[ -f ~/.local/share/chezmoi/setup/pacman_packages.txt ]]; then
+  echo "Installing pacman packages..."
+  xargs -r sudo pacman -S --needed <~/.local/share/chezmoi/setup/pacman_packages.txt || error "Failed to install pacman packages"
+fi
+
 # Install AUR packages
 yes | yay -S --needed --noconfirm --answerdiff=None --answerclean=None - <~/.local/share/chezmoi/setup/aur_packages.txt
 
