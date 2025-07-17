@@ -1,0 +1,50 @@
+###############################################################################
+# GLOBAL LAYOUT: arrow → dir → git branch → git status
+###############################################################################
+add_newline = false
+format = """$character$directory$git_branch$git_status"""
+
+###############################################################################
+# 1)  ARROW  (green = last cmd OK, red = last cmd failed)
+###############################################################################
+[character]
+success_symbol = "[󰁕](green) "
+error_symbol   = "[󰁕](red) "   # keep two spaces so alignment matches success
+
+###############################################################################
+# 2)  DIRECTORY  (cyan)
+###############################################################################
+[directory]
+format = "[$path](cyan) "        # trailing space after the directory name
+truncation_length = 1            # show repo name only (no long paths)
+truncate_to_repo  = false
+
+###############################################################################
+# 3)  GIT BRANCH  →  git:(master)
+#       • “git:” stays default colour
+#       • branch name in red
+#       • parentheses default colour
+###############################################################################
+[git_branch]
+format = "git:([\\($branch\\)](red))"
+style  = ""                      # prevent Starship from recolouring the whole bit
+
+###############################################################################
+# 4)  GIT STATUS  →  ✗  (shown only when repo is dirty)
+###############################################################################
+[git_status]
+format = "[$all_status]($style) " # append directly after branch
+style  = "yellow"
+
+# single yellow heavy ballot ✗  for any dirty condition
+up_to_date  = ""                 # nothing if repo is clean
+conflicted  = " ✘"
+ahead       = " ✘"
+behind      = " ✘"
+diverged    = " ✘"
+untracked   = " ✘"
+stashed     = " ✘"
+modified    = " ✘"
+staged      = " ✘"
+renamed     = " ✘"
+deleted     = " ✘"

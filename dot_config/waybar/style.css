@@ -1,0 +1,112 @@
+
+* {
+  font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", "Fira Code", sans-serif;
+  font-size: 12px;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  min-height: 0;
+}
+
+window#waybar {
+  background-color: rgba(20, 20, 20, 0.85);
+  color: #ffffff;
+  border-bottom: 1px solid #444;
+  padding: 2px 8px;  /* ← vertical padding affects height */
+}
+
+/* Transparent background for all modules */
+#clock,
+#cpu,
+#temperature.cpu,
+#memory,
+#custom-gputemp,
+#custom-gpu,
+#custom-net_speed,
+#custom-ipaddr,
+#pulseaudio,
+#tray,
+#workspaces {
+  background-color: transparent;
+}
+
+/* Module text colors */
+#cpu                { color: #ff69b4; }
+#temperature.cpu    { color: #ff69b4; }
+#memory             { color: #c586c0; }
+#custom-gpu         { color: #66cccc; }
+#custom-gputemp     { color: #66cccc; }
+#custom-net_speed   { color: #d3869b; }
+#custom-ipaddr      { color: #d3869b; }
+#pulseaudio         { color: #99cc99; }
+
+/* Warning and critical styles */
+#temperature.cpu.warning,
+#custom-gputemp.warning {
+  color: #ff5555;
+}
+
+@keyframes blink {
+  50% { color: #ff5555; }
+  100% { color: #ffffff; }
+}
+
+#temperature.cpu.critical,
+#custom-gputemp.critical {
+  animation: blink 1s infinite;
+}
+
+/* Workspaces styling */
+#workspaces button {
+  padding: 0 4px;
+  margin: 0 2px;
+  background: transparent;
+  color: #bbbbbb;
+  border: 1px solid transparent;
+}
+
+#workspaces button.active {
+  color: #ffffff;
+  border-bottom: 2px solid #81a1c1;
+}
+
+#workspaces button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid #aaaaff;
+}
+
+/* === MODULE SPACING & BORDER COLORS === */
+
+/* Left margin for consistent gaps */
+#cpu,
+#custom-gpu,
+#memory,
+#pulseaudio {
+  margin-left: 6px;
+}
+
+/* Shared padding */
+#custom-net_speed,
+#custom-ipaddr,
+#cpu,
+#temperature.cpu,
+#custom-gpu,
+#custom-gputemp,
+#memory,
+#pulseaudio {
+  padding: 0 6px;
+}
+
+/* Bottom border color for each module */
+#custom-net_speed   { border-bottom: 2px solid #d3869b; }
+#custom-ipaddr      { border-bottom: 2px solid #d3869b; }
+#cpu                { border-bottom: 2px solid #ff69b4; }
+#temperature.cpu    { border-bottom: 2px solid #ff69b4; }
+#custom-gpu         { border-bottom: 2px solid #66cccc; }
+#custom-gputemp     { border-bottom: 2px solid #66cccc; }
+#memory             { border-bottom: 2px solid #c586c0; }
+#pulseaudio         { 
+  border-bottom: 2px solid #99cc99; 
+  padding-right: 12px;
+}

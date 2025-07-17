@@ -1,0 +1,43 @@
+
+# Path to Oh My Zsh installation
+export ZSH="$HOME/.oh-my-zsh"
+
+# Plugins to load
+plugins=(
+  git
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+
+# Source Oh My Zsh
+source $ZSH/oh-my-zsh.sh
+
+# Aliases
+alias c='clear'
+alias vim='nvim'
+alias vi='nvim'
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias g='git'
+
+# Environment variables
+export OPENER=imv
+
+# Image viewing functions
+rimv() {
+  local dir=${1:-.}
+  find "$dir" \
+    -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.heic' \) -print0 |
+    sort -Rz | xargs -0 imv -f
+}
+
+simv() {
+  local dir=${1:-.}
+  find "$dir" \
+    -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.heic' \) -printf "%s %p\n" |
+    sort -nr | cut -d' ' -f2- |
+    xargs -d '\n' imv -f
+}
+
+# Initialize Starship prompt
+eval "$(starship init zsh)"

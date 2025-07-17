@@ -1,0 +1,11 @@
+neovim
+kitty
+starship
+btop
+mpv
+imv
+fzf
+ripgrep
+fd
+bat
+steam

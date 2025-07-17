@@ -1,0 +1,4 @@
+# Source the interactive shell configuration
+if [[ -f ~/.zshrc ]]; then
+  source ~/.zshrc
+fi

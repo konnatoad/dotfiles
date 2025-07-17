@@ -1,0 +1,9 @@
+spicetify-cli
+spotify-launcher
+vesktop-bin
+zen-browser-bin
+xone-dkms-git
+yay
+electron37-bin
+electron37-bin-debug
+stylua
