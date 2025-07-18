@@ -17,6 +17,14 @@ curl -sS https://starship.rs/install.sh | sh
 # Apply dotfiles
 chezmoi apply -R || error "Failed to apply dotfiles"
 
+# Install the custom keyboard layout
+if [ -f "$HOME/.config/xkb/symbols/custom_fi" ]; then
+  echo "Installing custom keyboard layout..."
+  sudo cp "$HOME/.config/xkb/symbols/custom_fi" /usr/share/X11/xkb/symbols/custom_fi || error "Failed to copy custom layout"
+else
+  echo "[WARNING] custom_fi not found in dotfiles"
+fi
+
 # Install pacman packages
 yes | sudo pacman -S --needed --noconfirm - <~/.local/share/chezmoi/setup/pacman_packages.txt
 
