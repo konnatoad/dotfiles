@@ -18,10 +18,7 @@ curl -sS https://starship.rs/install.sh | sh
 chezmoi apply -R || error "Failed to apply dotfiles"
 
 # Install the custom keyboard layout
-sudo cp "$HOME/dotfiles/setup/custom_fi" /usr/share/X11/xkb/symbols/
-
-# Install pacman packages
-yes | sudo pacman -S --needed --noconfirm - <~/.local/share/chezmoi/setup/pacman_packages.txt
+sudo cp ~/.local/share/chezmoi/setup/custom_fi /usr/share/X11/xkb/symbols/
 
 # Install AUR packages
 yes | yay -S --needed --noconfirm --answerdiff=None --answerclean=None - <~/.local/share/chezmoi/setup/aur_packages.txt
