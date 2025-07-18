@@ -9,7 +9,8 @@ Configuration includes:
 - Hyprland, Waybar, Rofi
 - Neovim (LazyVim-based)
 - Spicetify, Vesktop theming
-- Modified `custom_fi` keymap for my ansi layout kb to include `less`, `greater` and `bar` under `AltGr + comma`, `AltGr + dot`, and `AltGr + dash`
+- Modified `custom_fi` keymap for my ANSI layout keyboard to include `less`, `greater`,
+  and `bar` under `AltGr + comma`, `AltGr + dot`, and `AltGr + minus`.
 
 ---
 
