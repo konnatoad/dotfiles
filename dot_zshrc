@@ -1,6 +1,5 @@
-
-# Path to Oh My Zsh installation
 export ZSH="$HOME/.oh-my-zsh"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 # Plugins to load
 plugins=(
