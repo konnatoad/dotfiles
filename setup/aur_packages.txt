@@ -13,6 +13,7 @@ imv
 neovim
 npm
 ripgrep
+rofi-wayland
 spotify
 spicetify-cli
 telegram-desktop
