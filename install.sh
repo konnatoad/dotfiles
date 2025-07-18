@@ -29,7 +29,8 @@ yes | yay -S --needed --noconfirm --answerdiff=None --answerclean=None - <~/.loc
 # install ohmyzsh and plugins
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   echo "Getting ohmyz.sh"
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" ""
+  RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" ""
+  echo "✓ oh-my-zsh installed successfully."
 else
   echo ".oh-my-zsh already found, skipping."
 fi
