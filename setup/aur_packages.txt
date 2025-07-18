@@ -24,4 +24,5 @@ ttf-jetbrains-mono-nerd
 ttf-nerd-fonts-symbols
 vesktop-bin
 yazi
+waybar
 zen-browser-bin
