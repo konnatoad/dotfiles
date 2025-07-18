@@ -49,4 +49,10 @@ fi
 # set zsh as shell
 chsh -s /usr/bin/zsh
 
+if ! command -v cargo &>/dev/null; then
+  curl https://sh.rustup.rs/ -sSf | sh
+fi
+
+source $HOME/.cargo/env
+
 echo "All done."
