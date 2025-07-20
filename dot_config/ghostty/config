@@ -1,0 +1,7 @@
+background = #000000
+foreground = #FFFFFF
+background-opacity = 0.75
+background-blur = true
+
+font-family = "JetBrainMono Nerd Font"
+font-size = 12
