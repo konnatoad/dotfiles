@@ -8,6 +8,7 @@ feh
 fzf
 fd
 ghostty
+grim
 luarocks
 mpv
 imv
@@ -17,6 +18,7 @@ ripgrep
 rofi-wayland
 spotify
 spicetify-cli
+slupr
 telegram-desktop
 thunar
 tmux
