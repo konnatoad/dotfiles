@@ -54,12 +54,12 @@
     {
       "type": "cursor",
       "key": "│ ├",
-      "keyColor": "blue",
+      "keyColor": "blue"
     },
     {
       "type": "terminalfont",
       "key": "│ ├",
-      "keyColor": "blue",
+      "keyColor": "blue"
     },
     {
       "type": "terminal",
@@ -67,9 +67,10 @@
       "keyColor": "blue"
     },
     {
-      "type": "host",
+      "type": "command",
       "key": "󰌢 SYSTEM",
-      "keyColor": "green"
+      "keyColor": "green",
+      "text": "echo 'TUF GAMING X570-PLUS (WI-FI) Rev X.0x'"
     },
     {
       "type": "cpu",
@@ -99,8 +100,13 @@
       "keyColor": "green"
     },
     {
+      "type": "disk",
+      "key": "│ ├󰋊",
+      "keyColor": "green"
+    },
+    {
       "type": "uptime",
-      "key": "│ ├󰅐",
+      "key": "│ └󰅐",
       "keyColor": "green"
     },
     {
@@ -123,6 +129,6 @@
       "type": "custom",
       "format": "\u001b[90m  \u001b[31m  \u001b[32m  \u001b[33m  \u001b[34m  \u001b[35m  \u001b[36m  \u001b[37m  \u001b[38m  \u001b[39m  \u001b[39m    \u001b[38m  \u001b[37m  \u001b[36m  \u001b[35m  \u001b[34m  \u001b[33m  \u001b[32m  \u001b[31m  \u001b[90m "
     },
-    "break",
+    "break"
   ]
 }
