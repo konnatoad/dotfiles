@@ -1,3 +1,4 @@
+
 export ZSH="$HOME/.oh-my-zsh"
 export PATH="$HOME/.cargo/bin:$PATH"
 
@@ -26,18 +27,50 @@ alias g='git'
 # Environment variables
 export OPENER=imv
 
+uzip() {
+  for file in *.zip; do
+    [ -e "$file" ] || {echo "No zip files found."; return;}
+    base="${file%.zip}"
+    mkdir -p "$base"
+    echo "Extracting $file -> $base/"
+    unzip -o "$file" -d "$base" >/dev/null 2>&1
+    if [ "(ls -A "$base" 2>/dev/null)" ]; then
+      rm -f "$file"
+      echo "Deleted $file"
+    else
+      echo "Extraction may have failed for $file - not deleting."
+    fi
+  done
+}
+
+urar() {
+  for file in *.rar; do
+    [ -e "$file" ] || {echo "No rar files found."; return;}
+    base="${file%.rar}"
+    mkdir -p "$base"
+    echo "Extracting $file -> $base/";
+    unrar x -o+ "$file" "$base/" >/dev/null 2>&1
+    if [ "(ls -A "$base" 2>/dev/null)" ]; then
+      rm -f "$file"
+      echo "Deleted $file"
+    else
+      echo "Extraction may have failed for $file - not deleting."
+    fi
+  done
+}
+
 # Image viewing functions
 rimv() {
   local dir=${1:-.}
   find "$dir" \
-    -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.heic' \) -print0 |
+    -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.heic' -o -iname '*jfif' \) -print0 |
     sort -Rz | xargs -0 imv -f
 }
 
 simv() {
   local dir=${1:-.}
   find "$dir" \
-    -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.heic' \) -printf "%s %p\n" |
+    -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.heic' -o -iname '*jfif' \) -printf "%s %p\n" |
     sort -nr | cut -d' ' -f2- |
     xargs -d '\n' imv -f
 }
