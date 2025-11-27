@@ -9,7 +9,6 @@
   ],
   "modules-right": [
     "custom/net_speed",
-    "custom/ipaddr",
     "cpu",
     "temperature#cpu",
     "custom/gpu",
