@@ -1,8 +1,7 @@
-# Vesktop runtime stuff – don't track
 dot_config/vesktop/Crashpad/
 dot_config/vesktop/sessionData/
 dot_config/vesktop/SingletonCookie
 dot_config/vesktop/SingletonLock
 dot_config/vesktop/SingletonSocket
 dot_config/vesktop/state.json
-
+dot_config/spicetify/config-xpui.ini
