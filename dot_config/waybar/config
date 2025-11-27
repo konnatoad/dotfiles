@@ -1,0 +1,65 @@
+{
+  "layer": "top",
+  "position": "top",
+
+  "modules-left": [ "hyprland/workspaces" ],
+  "modules-center": [ "clock" ],
+  "modules-right": [
+    "custom/net_speed", "custom/ipaddr",
+    "cpu", "temperature#cpu",
+    "custom/gpu", "custom/gputemp",
+    "memory",
+    "pulseaudio"
+  ],
+
+
+  "clock": {
+    "format": " {:%H:%M   %Y-%m-%d}"
+  },
+
+"cpu": {
+  "format": " {usage}%"
+},
+
+  "temperature#cpu": {
+    "hwmon-path": "/sys/class/hwmon/hwmon4/temp1_input",
+    "format": " {temperatureC}°C",
+    "critical-threshold": 90,
+    "interval": 2
+  },
+
+  "memory": {
+    "format": " {used:.1f} GiB/{total:.0f} GiB",
+    "interval": 3
+  },
+
+  "custom/gpu": {
+    "format": " {}%",
+    "exec": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits",
+    "interval": 5
+  },
+
+  "custom/gputemp": {
+    "format": " {}°C",
+    "exec": "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits",
+    "return-type": "integer",
+    "interval": 5
+  },
+
+  "custom/net_speed": {
+    "format": "{}",
+    "exec": "~/.config/waybar/scripts/net_speed.sh",
+    "interval": 1
+  },
+
+  "custom/ipaddr": {
+    "format": "\uf6ff {}",
+    "exec": "ip -4 addr show enp6s0 | grep -oP '(?<=inet\\s)\\d+(\\.\\d+){3}' || echo 'No IP'",
+    "interval": 5
+  },
+
+  "pulseaudio": {
+    "format": "{volume}% {icon}",
+    "format-icons": ["", "", ""]
+  }
+}
