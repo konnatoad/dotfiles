@@ -1,0 +1,10 @@
+{
+  "verbose_logging": false,
+  "compression_enabled": false,
+  "compression_level": "Normal",
+  "conflict_resolution_enabled": false,
+  "conflict_resolution_mode": "Prompt",
+  "default_backup_location": null,
+  "automatic_updates": false,
+  "file_size_summary": false
+}

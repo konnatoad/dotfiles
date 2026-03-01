@@ -2,10 +2,10 @@
     "autoUpdate": true,
     "autoUpdateNotification": true,
     "useQuickCss": true,
-    "themeLinks": [],
-    "enabledThemes": [
-        "Fluent-Discord.theme.css"
+    "themeLinks": [
+        "https://raw.githubusercontent.com/Dyzean/Tokyo-Night/main/themes/tokyo-night.theme.css"
     ],
+    "enabledThemes": [],
     "enableReactDevtools": false,
     "frameless": false,
     "transparent": true,
@@ -452,7 +452,7 @@
             "permissionsSortOrder": 0
         },
         "petpet": {
-            "enabled": false
+            "enabled": true
         },
         "PictureInPicture": {
             "enabled": false
@@ -461,18 +461,7 @@
             "enabled": true,
             "canCollapseDmSection": false,
             "userBasedCategoryList": {
-                "399646682247069717": [
-                    {
-                        "id": "bxfrr7crlwq",
-                        "name": "<3",
-                        "color": 16738740,
-                        "collapsed": false,
-                        "channels": [
-                            "1437142361481154693",
-                            "1406435843458990182"
-                        ]
-                    }
-                ],
+                "399646682247069717": [],
                 "98474524365832192": []
             },
             "pinOrder": 0
@@ -740,6 +729,9 @@
         },
         "WebContextMenus": {
             "enabled": true
+        },
+        "MoreQuickReactions": {
+            "enabled": false
         }
     },
     "notifications": {
@@ -752,7 +744,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1764017685209
+        "settingsSyncVersion": 1766975654414
     },
     "eagerPatches": false,
     "uiElements": {
