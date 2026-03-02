@@ -18,7 +18,7 @@ ripgrep
 rofi-wayland
 spotify
 spicetify-cli
-slupr
+slurp
 telegram-desktop
 thunar
 tmux
