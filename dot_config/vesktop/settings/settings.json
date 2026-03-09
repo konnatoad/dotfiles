@@ -3,7 +3,7 @@
     "autoUpdateNotification": true,
     "useQuickCss": true,
     "themeLinks": [
-        "https://raw.githubusercontent.com/Dyzean/Tokyo-Night/main/themes/tokyo-night.theme.css"
+        "https://takosthings.github.io/Fluent-Discord/Fluent-Discord.theme.css"
     ],
     "enabledThemes": [],
     "enableReactDevtools": false,
@@ -146,13 +146,31 @@
             "enabled": false
         },
         "CrashHandler": {
-            "enabled": true
+            "enabled": true,
+            "attemptToPreventCrashes": true,
+            "attemptToNavigateToHome": false
         },
         "CtrlEnterSend": {
             "enabled": false
         },
         "CustomRPC": {
-            "enabled": false
+            "enabled": true,
+            "type": 0,
+            "appID": "1238981186035122257",
+            "appName": "kafka",
+            "details": "kafka",
+            "state": "hehe tissi",
+            "imageBig": "",
+            "imageBigTooltip": "https://github.com/konnatoad/kafkaBot",
+            "imageBigURL": "https://github.com/konnatoad/kafkaBot",
+            "imageSmall": "https://i.redd.it/qxcfyzghppkb1.jpg",
+            "imageSmallTooltip": "kafka",
+            "imageSmallURL": "https://github.com/konnatoad/Konserve",
+            "buttonOneText": "kafka",
+            "buttonOneURL": "https://github.com/konnatoad/kafkaBot",
+            "buttonTwoText": "toad",
+            "buttonTwoURL": "https://github.com/konnatoad",
+            "timestampMode": 2
         },
         "CustomIdle": {
             "enabled": false
@@ -716,7 +734,8 @@
             "enabled": false
         },
         "ImageFilename": {
-            "enabled": false
+            "enabled": true,
+            "showFullUrl": false
         },
         "WebKeybinds": {
             "enabled": true
@@ -744,7 +763,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1766975654414
+        "settingsSyncVersion": 1772721860522
     },
     "eagerPatches": false,
     "uiElements": {
