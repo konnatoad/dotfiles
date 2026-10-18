@@ -2,6 +2,7 @@
 # GLOBAL LAYOUT: arrow → dir → git branch → git status
 ###############################################################################
 add_newline = false
+scan_timeout = 200   # ms; custom.git_dirty scans cwd, ~ has an sshfs mount that can be slow
 format = """$character$directory$git_branch${custom.git_dirty}"""
 
 ###############################################################################
