@@ -1,15 +1,15 @@
-/* palette pulled from the twilight cats wallpaper */
-@define-color bg       rgba(24, 20, 34, 0.82);
+/* palette pulled from the wallhaven-lq3lmy wallpaper: monochrome */
+@define-color bg       rgba(30, 30, 30, 0.82);
 @define-color pill     rgba(255, 255, 255, 0.06);
-@define-color fg       #e6e1f0;
-@define-color dim      #8a8299;
-@define-color pink     #ff7eb6;
-@define-color mauve    #c9a0dc;
-@define-color teal     #7ad7d7;
-@define-color rose     #e8a0b4;
-@define-color green    #a6d9a0;
-@define-color accent   #b48ead;
-@define-color red      #ff5c7a;
+@define-color fg       #e4e4e4;
+@define-color dim      #7a7a7a;
+@define-color pink     #d6d6d6;
+@define-color mauve    #bdbdbd;
+@define-color teal     #d6d6d6;
+@define-color rose     #a8a8a8;
+@define-color green    #e4e4e4;
+@define-color accent   #9a9a9a;
+@define-color red      #ff4d6d;
 
 * {
   font-family: "JetBrainsMono Nerd Font", "Fira Code", sans-serif;
@@ -26,12 +26,12 @@ window#waybar {
   background: @bg;
   color: @fg;
   border-radius: 8px;
-  border: 1px solid rgba(201, 160, 220, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 tooltip {
-  background: rgb(24, 20, 34);
-  border: 1px solid rgba(201, 160, 220, 0.3);
+  background: rgb(30, 30, 30);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
 }
 tooltip label { color: @fg; padding: 4px; }
