@@ -1,7 +1,12 @@
-background = #000000
-foreground = #FFFFFF
+# background = #000000  (now from noctalia theme)
+# foreground = #FFFFFF  (now from noctalia theme)
 background-opacity = 0.75
 background-blur = true
 
-font-family = "JetBrainMono Nerd Font"
+font-family = "JetBrainsMono Nerd Font"
 font-size = 12
+theme = noctalia
+
+# liquid cursor trail (gpu shader), same color as the cursor
+custom-shader = ~/.config/ghostty/shaders/cursor_liquid.glsl
+custom-shader-animation = true
