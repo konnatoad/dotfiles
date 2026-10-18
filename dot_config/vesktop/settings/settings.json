@@ -4,7 +4,7 @@
     "useQuickCss": true,
     "themeLinks": [],
     "enabledThemes": [
-        "konna.theme.css"
+        "monotheme.theme.css"
     ],
     "enableReactDevtools": false,
     "frameless": false,
@@ -796,7 +796,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1792349629787
+        "settingsSyncVersion": 1792358160419
     },
     "eagerPatches": false,
     "uiElements": {

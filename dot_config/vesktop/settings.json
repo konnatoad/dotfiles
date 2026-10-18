@@ -2,12 +2,12 @@
     "discordBranch": "stable",
     "minimizeToTray": true,
     "arRPC": true,
-    "splashColor": "rgb(239, 239, 241)",
+    "splashColor": "rgb(226, 226, 226)",
     "spellCheckLanguages": [
         "en-US",
         "en"
     ],
-    "splashBackground": "rgb(26, 27, 38)",
+    "splashBackground": "rgba(0, 0, 0, 0)",
     "staticTitle": false,
     "enableMenu": false
 }
