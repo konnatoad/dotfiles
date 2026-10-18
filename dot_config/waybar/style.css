@@ -1,112 +1,111 @@
+/* palette pulled from the twilight cats wallpaper */
+@define-color bg       rgba(24, 20, 34, 0.82);
+@define-color pill     rgba(255, 255, 255, 0.06);
+@define-color fg       #e6e1f0;
+@define-color dim      #8a8299;
+@define-color pink     #ff7eb6;
+@define-color mauve    #c9a0dc;
+@define-color teal     #7ad7d7;
+@define-color rose     #e8a0b4;
+@define-color green    #a6d9a0;
+@define-color accent   #b48ead;
+@define-color red      #ff5c7a;
 
 * {
   font-family: "JetBrainsMono Nerd Font", "Fira Code", sans-serif;
   font-size: 12px;
+  font-weight: 500;
   border: none;
   border-radius: 0;
+  min-height: 0;
   padding: 0;
   margin: 0;
-  min-height: 0;
 }
 
 window#waybar {
-  background-color: rgba(20, 20, 20, 0.85);
-  color: #ffffff;
-  border-bottom: 1px solid #444;
-  padding: 2px 8px;  /* ← vertical padding affects height */
+  background: @bg;
+  color: @fg;
+  border-radius: 8px;
+  border: 1px solid rgba(201, 160, 220, 0.18);
 }
 
-/* Transparent background for all modules */
+tooltip {
+  background: rgb(24, 20, 34);
+  border: 1px solid rgba(201, 160, 220, 0.3);
+  border-radius: 8px;
+}
+tooltip label { color: @fg; padding: 4px; }
+
+/* ---------- pills ---------- */
+#workspaces,
 #clock,
-#cpu,
-#temperature.cpu,
-#memory,
-#custom-gputemp,
-#custom-gpu,
 #custom-net_speed,
-#custom-ipaddr,
-#pulseaudio,
-#tray,
-#workspaces {
-  background-color: transparent;
+#cpu-group, #cpu, #temperature,
+#gpu-group, #custom-gpu, #custom-gputemp,
+#memory,
+#pulseaudio {
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
-/* Module text colors */
-#cpu                { color: #ff69b4; }
-#temperature.cpu    { color: #ff69b4; }
-#memory             { color: #c586c0; }
-#custom-gpu         { color: #66cccc; }
-#custom-gputemp     { color: #66cccc; }
-#custom-net_speed   { color: #d3869b; }
-#custom-ipaddr      { color: #d3869b; }
-#pulseaudio         { color: #99cc99; }
-
-/* Warning and critical styles */
-#temperature.cpu.warning,
-#custom-gputemp.warning {
-  color: #ff5555;
+#clock,
+#custom-net_speed,
+#memory,
+#pulseaudio {
+  background: @pill;
+  border-radius: 6px;
+  padding: 0 10px;
 }
 
-@keyframes blink {
-  50% { color: #ff5555; }
-  100% { color: #ffffff; }
+/* grouped pills: one rounded background around both halves */
+#cpu, #custom-gpu {
+  background: @pill;
+  border-radius: 6px 0 0 7px;
+  padding: 0 6px 0 10px;
+}
+#temperature, #custom-gputemp {
+  background: @pill;
+  border-radius: 0 7px 7px 0;
+  padding: 0 10px 0 6px;
 }
 
-#temperature.cpu.critical,
-#custom-gputemp.critical {
-  animation: blink 1s infinite;
-}
+#workspaces  { margin-left: 4px; }
+#pulseaudio  { margin-right: 4px; }
 
-/* Workspaces styling */
+/* ---------- colors ---------- */
+#clock             { color: @fg; font-weight: 600; }
+#custom-net_speed  { color: @rose; }
+#cpu, #temperature { color: @pink; }
+#custom-gpu, #custom-gputemp { color: @teal; }
+#memory            { color: @mauve; }
+#pulseaudio        { color: @green; }
+#pulseaudio.muted  { color: @dim; }
+
+#temperature.critical {
+  color: @red;
+  animation: blink 1s steps(2) infinite;
+}
+@keyframes blink { to { color: @fg; } }
+
+/* ---------- workspaces ---------- */
 #workspaces button {
-  padding: 0 4px;
-  margin: 0 2px;
+  color: @dim;
   background: transparent;
-  color: #bbbbbb;
-  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0 7px;
+  margin: 0 1px;
+  transition: all 150ms ease;
 }
-
-#workspaces button.active {
-  color: #ffffff;
-  border-bottom: 2px solid #81a1c1;
-}
-
 #workspaces button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-bottom: 2px solid #aaaaff;
+  background: @pill;
+  color: @fg;
+  box-shadow: none;
 }
-
-/* === MODULE SPACING & BORDER COLORS === */
-
-/* Left margin for consistent gaps */
-#cpu,
-#custom-gpu,
-#memory,
-#pulseaudio {
-  margin-left: 6px;
+#workspaces button.active {
+  background: alpha(@accent, 0.35);
+  color: #ffffff;
 }
-
-/* Shared padding */
-#custom-net_speed,
-#custom-ipaddr,
-#cpu,
-#temperature.cpu,
-#custom-gpu,
-#custom-gputemp,
-#memory,
-#pulseaudio {
-  padding: 0 6px;
-}
-
-/* Bottom border color for each module */
-#custom-net_speed   { border-bottom: 2px solid #d3869b; }
-#custom-ipaddr      { border-bottom: 2px solid #d3869b; }
-#cpu                { border-bottom: 2px solid #ff69b4; }
-#temperature.cpu    { border-bottom: 2px solid #ff69b4; }
-#custom-gpu         { border-bottom: 2px solid #66cccc; }
-#custom-gputemp     { border-bottom: 2px solid #66cccc; }
-#memory             { border-bottom: 2px solid #c586c0; }
-#pulseaudio         { 
-  border-bottom: 2px solid #99cc99; 
-  padding-right: 12px;
+#workspaces button.urgent {
+  background: alpha(@red, 0.5);
+  color: #ffffff;
 }

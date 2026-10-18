@@ -1,59 +1,79 @@
 {
   "layer": "top",
   "position": "top",
-  "modules-left": [
-    "hyprland/workspaces"
-  ],
-  "modules-center": [
-    "clock"
-  ],
+  "margin-top": 4,
+  "margin-left": 8,
+  "margin-right": 8,
+  "spacing": 6,
+
+  "modules-left": ["hyprland/workspaces"],
+  "modules-center": ["clock"],
   "modules-right": [
     "custom/net_speed",
-    "cpu",
-    "temperature#cpu",
-    "custom/gpu",
-    "custom/gputemp",
+    "group/cpu",
+    "group/gpu",
     "memory",
     "pulseaudio"
   ],
+
+  "hyprland/workspaces": {
+    "format": "{id}",
+    "on-scroll-up": "hyprctl dispatch workspace e-1",
+    "on-scroll-down": "hyprctl dispatch workspace e+1"
+  },
+
   "clock": {
-    "format": " {:%H:%M   %Y-%m-%d}"
+    "format": "  {:%H:%M}",
+    "format-alt": "  {:%A %d.%m.%Y}",
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "calendar": { "mode": "month", "weeks-pos": "left" }
   },
+
+  "group/cpu": { "orientation": "horizontal", "modules": ["cpu", "temperature#cpu"] },
   "cpu": {
-    "format": " {usage}%"
+    "format": "  {usage}%",
+    "interval": 2
   },
+  // k10temp (Tctl) by device path, so hwmon renumbering can't break it
   "temperature#cpu": {
-    "hwmon-path": "/sys/class/hwmon/hwmon4/temp1_input",
+    "hwmon-path-abs": "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
+    "input-filename": "temp1_input",
     "format": " {temperatureC}°C",
     "critical-threshold": 90,
     "interval": 2
   },
-  "memory": {
-    "format": " {used:.1f} GiB/{total:.0f} GiB",
-    "interval": 3
-  },
+
+  "group/gpu": { "orientation": "horizontal", "modules": ["custom/gpu", "custom/gputemp"] },
   "custom/gpu": {
-    "format": " {}%",
+    "format": "  {}%",
     "exec": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits",
     "interval": 5
   },
   "custom/gputemp": {
     "format": " {}°C",
     "exec": "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits",
-    "return-type": "integer",
     "interval": 5
   },
+
+  "memory": {
+    "format": "  {used:.1f}/{total:.0f} GiB",
+    "tooltip-format": "{used:.1f} GiB used, {avail:.1f} GiB available",
+    "interval": 3
+  },
+
   "custom/net_speed": {
     "format": "{}",
     "exec": "~/.config/waybar/scripts/net_speed.sh",
+    "min-length": 24,
+    "align": 0.5,
     "interval": 1
   },
+
   "pulseaudio": {
-    "format": "{volume}% {icon}",
-    "format-icons": [
-      "",
-      "",
-      ""
-    ]
+    "format": "{icon}  {volume}%",
+    "format-muted": "  muted",
+    "format-icons": ["", "", ""],
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "scroll-step": 5
   }
 }

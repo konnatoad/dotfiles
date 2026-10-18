@@ -1,11 +1,4 @@
 #!/bin/sh
 
-# start hyprpaper
+# start hyprpaper (0.8+ reads the wallpaper from hyprpaper.conf, no IPC needed)
 hyprpaper &
-
-# wait a moment for IPC to be ready
-sleep 0.3
-
-# set wallpaper via IPC (this is the part that WORKS)
-hyprctl hyprpaper preload /home/konna/Pictures/cats_twilight_fixed.png
-hyprctl hyprpaper wallpaper ",/home/konna/Pictures/cats_twilight_fixed.png"

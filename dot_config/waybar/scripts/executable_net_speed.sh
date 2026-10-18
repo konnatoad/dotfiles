@@ -21,17 +21,17 @@ TX_BPS=$((TX_DIFF * 8))
 format_speed_iec() {
   local BPS=$1
   if ((BPS < 1024)); then
-    printf "%10s" "${BPS} bps"
+    printf "%s" "${BPS} bps"
   elif ((BPS < 1048576)); then
-    printf "%10s" "$((BPS / 1024)) Kbps"
+    printf "%s" "$((BPS / 1024)) Kbps"
   elif ((BPS < 1073741824)); then
-    printf "%10s" "$((BPS / 1048576)) Mbps"
+    printf "%s" "$((BPS / 1048576)) Mbps"
   else
-    printf "%10s" "$((BPS / 1073741824)) Gbps"
+    printf "%s" "$((BPS / 1073741824)) Gbps"
   fi
 }
 
 RX_HUMAN=$(format_speed_iec "$RX_BPS")
 TX_HUMAN=$(format_speed_iec "$TX_BPS")
 
-printf "↓ %s   ↑ %s\n" "$RX_HUMAN" "$TX_HUMAN"
+printf "↓ %s  ↑ %s\n" "$RX_HUMAN" "$TX_HUMAN"
