@@ -2,7 +2,7 @@
 # GLOBAL LAYOUT: arrow → dir → git branch → git status
 ###############################################################################
 add_newline = false
-format = """$character$directory$git_branch$git_status"""
+format = """$character$directory$git_branch${custom.git_dirty}"""
 
 ###############################################################################
 # 1)  ARROW  (green = last cmd OK, red = last cmd failed)
@@ -26,25 +26,23 @@ truncate_to_repo  = false
 #       • parentheses default colour
 ###############################################################################
 [git_branch]
-format = "git:([\\($branch\\)](red))"
+format = "git:([\\($branch\\)](red)) "
 style  = ""                      # prevent Starship from recolouring the whole bit
 
 ###############################################################################
-# 4)  GIT STATUS  →  ✗  (shown only when repo is dirty)
+# 4)  GIT DIRTY  →  one ✘ no matter how many kinds of changes there are
+#       (git_status's $all_status prints one symbol per kind, e.g. ✘ ✘)
+#       dirty = uncommitted/untracked changes, stash, or ahead/behind upstream
 ###############################################################################
-[git_status]
-format = "[$all_status]($style) " # append directly after branch
-style  = "yellow"
-
-# single yellow heavy ballot ✗  for any dirty condition
-up_to_date  = ""                 # nothing if repo is clean
-conflicted  = " ✘"
-ahead       = " ✘"
-behind      = " ✘"
-diverged    = " ✘"
-untracked   = " ✘"
-stashed     = " ✘"
-modified    = " ✘"
-staged      = " ✘"
-renamed     = " ✘"
-deleted     = " ✘"
+[custom.git_dirty]
+when = """
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 1
+[ -n "$(git status --porcelain 2>/dev/null | head -n1)" ] && exit 0
+git rev-parse -q --verify refs/stash >/dev/null && exit 0
+[ -n "$(git rev-list '@{u}...HEAD' 2>/dev/null | head -n1)" ] && exit 0
+exit 1
+"""
+command = "echo ✘"
+format  = "[$output]($style) "
+style   = "yellow"
+shell   = ["bash", "--noprofile", "--norc"]
