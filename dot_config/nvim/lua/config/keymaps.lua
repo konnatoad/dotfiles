@@ -1,6 +1,9 @@
+-- Keymaps are automatically loaded on the VeryLazy event
+-- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
+-- Add any additional keymaps here
+
 local map = vim.keymap.set
-local builtin = require("telescope.builtin")
 
 map("n", "<leader>ms", function()
-  builtin.find_files({ cwd = "/mnt/server" })
+  Snacks.picker.files({ cwd = "/mnt/server" })
 end, { desc = "Find files in /mnt/server" })
