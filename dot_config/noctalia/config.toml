@@ -1,0 +1,4 @@
+# hand-written base config; GUI changes land in ~/.local/state/noctalia/settings.toml
+
+[theme.templates]
+builtin_ids = ["ghostty"]
