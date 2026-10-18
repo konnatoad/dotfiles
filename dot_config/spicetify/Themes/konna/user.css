@@ -285,6 +285,53 @@ img,
 }
 
 /* ================= konna-keys overlays ================= */
+/* j/k cursor: bright in the pane you're in, dim in the other one */
+[role="row"].konna-cursor {
+  background-color: var(--spice-highlight) !important;
+  outline: 1px solid var(--spice-button);
+  outline-offset: -1px;
+  border-radius: 6px;
+}
+[role="row"].konna-cursor-idle {
+  outline: 1px solid var(--kb-line);
+  outline-offset: -1px;
+  border-radius: 6px;
+}
+/* rows matching the / find */
+[role="row"].konna-match {
+  box-shadow: inset 3px 0 0 var(--spice-button-active);
+}
+/* / find line, like vim's command line */
+.konna-cmdline {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(480px, 70vw);
+  background: var(--spice-main);
+  outline: 1px solid var(--spice-button);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font: 13px "JetBrainsMono Nerd Font", monospace;
+}
+.konna-cmdline .konna-key {
+  min-width: 0;
+}
+.konna-cmdline-input {
+  flex: 1;
+  background: transparent;
+  color: var(--spice-text);
+  border: none;
+  outline: none;
+  font: inherit;
+}
+.konna-cmdline-count {
+  color: var(--spice-subtext);
+}
 .konna-overlay {
   position: fixed;
   inset: 0;

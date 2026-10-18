@@ -73,10 +73,10 @@
   const groups = [
     ["playback", [
       ["space", "play / pause", () => S.Player.togglePlay()],
-      ["n", "next track", () => S.Player.next()],
+      ["n", "next track (next match after /)", () => (search ? stepMatch(1) : S.Player.next())],
       ["p", "previous track", () => S.Player.back()],
-      ["h", "seek -10s", () => seek(-10000)],
-      ["l", "seek +10s", () => seek(10000)],
+      [",", "seek -10s", () => seek(-10000)],
+      [".", "seek +10s", () => seek(10000)],
       ["+", "volume up", () => volume(0.05)],
       ["-", "volume down", () => volume(-0.05)],
       ["m", "mute", () => clickTestId("volume-bar-toggle-mute-button")],
@@ -85,15 +85,19 @@
       ["y", "like / unlike track", () => { S.Player.toggleHeart(); setTimeout(() => toast(S.Player.getHeart() ? "liked" : "unliked"), 150); }],
     ]],
     ["move", [
-      ["j / k", "scroll down / up", null],
-      ["d / u", "half page down / up", null],
-      ["gg / G", "top / bottom", null],
-      ["H / L", "back / forward", null],
+      ["j / k", "cursor down / up", null],
+      ["d / u", "cursor 10 down / up", null],
+      ["gg / G", "first / last item", null],
+      ["l / enter", "open item / play track", null],
+      ["h", "back to library", null],
+      ["H / L", "page back / forward", null],
       ["f", "hint mode: type the letters to click", () => hints()],
-      ["/", "search", () => search()],
+      ["/", "find in this list", () => find()],
+      ["n / N", "next / previous match", null],
       ["o", "open playlist (fuzzy)", () => picker()],
     ]],
     ["go to  (g …)", [
+      ["g /", "spotify search", () => spotifySearch()],
       ["g l", "liked songs", () => go("/collection/tracks")],
       ["g s", "stats", () => go("/stats")],
       ["g m", "marketplace", () => go("/marketplace")],
@@ -102,7 +106,7 @@
       ["g n", "now playing panel", () => $('[data-testid="cover-art-button"]')?.click()],
       ["g t", "lyrics", () => clickTestId("lyrics-button")],
     ]],
-    ["", [["?", "this sheet", () => help()], ["esc", "close / leave input", null]]],
+    ["", [["?", "this sheet", () => help()], ["esc", "close / leave input / clear find", null]]],
   ];
   const single = {};
   const gmap = {};
@@ -113,14 +117,195 @@
       else single[k === "space" ? " " : k] = fn;
     }
   Object.assign(single, {
-    j: () => scrollBy(140),
-    k: () => scrollBy(-140),
-    d: () => scrollBy((scroller()?.clientHeight ?? 800) / 2),
-    u: () => scrollBy(-(scroller()?.clientHeight ?? 800) / 2),
-    G: () => scrollTo(1e7),
+    j: () => move(1, () => scrollBy(140)),
+    k: () => move(-1, () => scrollBy(-140)),
+    d: () => move(10, () => scrollBy((scroller()?.clientHeight ?? 800) / 2)),
+    u: () => move(-10, () => scrollBy(-(scroller()?.clientHeight ?? 800) / 2)),
+    G: () => jump(true, () => scrollTo(1e7)),
+    l: () => activate(),
+    Enter: () => activate(),
+    h: () => toLibrary(),
+    N: () => (search ? stepMatch(-1) : false),
     H: () => P.History.goBack(),
     L: () => P.History.goForward(),
     "=": () => volume(0.05),
+  });
+
+  // ---------- cursor (like ranger): library on the left, the opened list on the right ----------
+  // rows are virtualized and get recycled while scrolling, so the cursor is { grid, aria-rowindex }, not an element.
+  // a page can hold several lists (a playlist and "recommended" below it), each numbering its rows from the top,
+  // so the cursor remembers which list it's in and j/k step from one list into the next.
+  const panes = { lib: ".Root__nav-bar", main: ".Root__main-view" };
+  const cur = { pane: "lib", lib: null, main: null };
+
+  const rindex = (r) => +r.getAttribute("aria-rowindex");
+  const gridOf = (r) => r.closest('[role="grid"], [role="treegrid"]') ?? r.parentElement;
+  const rowSel = '[role="row"][aria-rowindex]';
+  const rowsIn = (grid) =>
+    [...grid.querySelectorAll(rowSel)].filter((r) => !r.querySelector('[role="columnheader"]')).sort((a, b) => rindex(a) - rindex(b));
+  // lists in the pane, top to bottom
+  function grids(pane) {
+    const root = $(panes[pane]);
+    return root ? [...new Set([...root.querySelectorAll(rowSel)].map(gridOf))] : [];
+  }
+  const rowAt = (pane, c) => (c?.grid.isConnected ? rowsIn(c.grid).find((r) => rindex(r) === c.i) : null);
+  function bounds(grid, rs = rowsIn(grid)) {
+    const base = grid.querySelector('[role="columnheader"]') ? 2 : 1;
+    const lo = rs.length ? Math.min(base, rindex(rs[0])) : base;
+    const hi = +grid.getAttribute("aria-rowcount") || (rs.length ? rindex(rs.at(-1)) : lo);
+    return [lo, hi];
+  }
+  function scrollerOf(el) {
+    for (let e = el.parentElement; e; e = e.parentElement) {
+      const oy = getComputedStyle(e).overflowY;
+      if ((oy === "auto" || oy === "scroll") && e.scrollHeight > e.clientHeight) return e;
+    }
+  }
+
+  function select(pane, grid, i, tries = 0) {
+    if (!grid.isConnected) return;
+    const rs = rowsIn(grid);
+    const [lo, hi] = bounds(grid, rs);
+    i = Math.max(lo, Math.min(hi, i));
+    cur[pane] = { grid, i };
+    const r = rs.find((x) => rindex(x) === i);
+    if (r) {
+      r.scrollIntoView({ block: "nearest" });
+      paint();
+      return;
+    }
+    if (tries > 20) return;
+    // row not rendered yet: jump roughly there first, then step until the list renders it
+    if (!rs.length) grid.scrollIntoView({ block: i > lo ? "end" : "start" });
+    else {
+      const sc = scrollerOf(grid);
+      if (sc) {
+        if (!tries) sc.scrollTop = ((i - lo) / Math.max(1, hi - lo)) * sc.scrollHeight;
+        else sc.scrollTop += (i > rindex(rs.at(-1)) ? 0.8 : -0.8) * sc.clientHeight;
+      }
+    }
+    setTimeout(() => select(pane, grid, i, tries + 1), 50);
+  }
+  // pages without a list (artist, search, …) fall back to plain scrolling
+  function move(delta, fallback) {
+    const gs = grids(cur.pane);
+    if (!gs.length) return cur.pane === "main" ? fallback() : false;
+    const c = cur[cur.pane];
+    if (!c?.grid.isConnected) return select(cur.pane, gs[0], 0);
+    const [lo, hi] = bounds(c.grid);
+    const k = gs.indexOf(c.grid);
+    const i = c.i + delta;
+    // ran off the end of this list: continue into the next one (playlist -> recommended), or back up
+    if (i > hi && gs[k + 1]) return select(cur.pane, gs[k + 1], 0);
+    if (i < lo && k > 0) return select(cur.pane, gs[k - 1], 1e9);
+    select(cur.pane, c.grid, i);
+  }
+  // gg: top of the first list on the page, G: bottom of the list you're in
+  function jump(toEnd, fallback) {
+    const gs = grids(cur.pane);
+    if (!gs.length) return cur.pane === "main" ? fallback() : false;
+    const c = cur[cur.pane];
+    if (!toEnd) return select(cur.pane, gs[0], 0);
+    select(cur.pane, c?.grid.isConnected ? c.grid : gs[0], 1e9);
+  }
+
+  function open(r) {
+    try {
+      const uri = r.querySelector('[aria-labelledby*="spotify:"]')?.getAttribute("aria-labelledby").match(/spotify:\S+/)?.[0];
+      const path = uri && S.URI.fromString(uri).toURLPath(true);
+      if (path) return go(path);
+    } catch {}
+    (r.querySelector('[role="button"]') ?? r).click();
+  }
+  function activate() {
+    const r = rowAt(cur.pane, cur[cur.pane]);
+    if (!r) return false;
+    if (cur.pane === "lib") {
+      cur.pane = "main";
+      cur.main = null;
+      waitForList();
+      open(r);
+    } else {
+      playRow(r);
+    }
+    paint();
+  }
+  // the row's own hover play button keeps the playlist/album as context; if it's missing, play through the api
+  function playRow(r) {
+    const btn = r.querySelector('.main-trackList-rowPlayPauseButton, .main-trackList-rowImagePlayButton, button[aria-label^="Play"]');
+    // on the song that's already playing the button says "Pause": leave it playing (space is pause)
+    if (/^pause/i.test(btn?.getAttribute("aria-label") ?? "")) return;
+    // blur afterwards: a focused play button would also fire on space, so play/pause would toggle twice
+    if (btn) return btn.click(), btn.blur();
+    const id = r.querySelector('a[href*="/track/"]')?.getAttribute("href").match(/\/track\/(\w+)/)?.[1];
+    if (!id) return toast("can't find a track here");
+    const track = `spotify:track:${id}`;
+    const ctx = P.History.location.pathname.match(/^\/(playlist|album)\/(\w+)/);
+    if (ctx) S.Player.playUri(`spotify:${ctx[1]}:${ctx[2]}`, {}, { skipTo: { uri: track } });
+    else S.Player.playUri(track);
+  }
+  // the collapsed library is covers only, which is blank without artwork: always bring the names back
+  function uncollapseLibrary() {
+    const btn = $('.Root__nav-bar [aria-label="Open Your Library"]');
+    btn?.click();
+    return !!btn;
+  }
+  function toLibrary() {
+    uncollapseLibrary();
+    cur.pane = "lib";
+    if (!cur.lib?.grid.isConnected) return move(1);
+    select("lib", cur.lib.grid, cur.lib.i);
+  }
+
+  // after navigating, the old page stays up until the new one loads: wait for a different list
+  let waitTimer;
+  function waitForList() {
+    clearInterval(waitTimer);
+    const staleGrid = grids("main")[0];
+    const started = Date.now();
+    waitTimer = setInterval(() => {
+      const first = grids("main")[0];
+      const fresh = first && (first !== staleGrid || Date.now() - started > 1500);
+      if (fresh && cur.pane === "main" && cur.main == null) select("main", first, 0);
+      if (fresh || Date.now() - started > 5000) clearInterval(waitTimer);
+    }, 100);
+  }
+
+  // active pane's row gets the bright outline, the other pane keeps a dim one so you see where you were
+  function paint() {
+    for (const p of ["lib", "main"]) {
+      const want = rowAt(p, cur[p]);
+      const cls = p === cur.pane ? "konna-cursor" : "konna-cursor-idle";
+      $(panes[p])?.querySelectorAll(".konna-cursor, .konna-cursor-idle").forEach((r) => r !== want && r.classList.remove("konna-cursor", "konna-cursor-idle"));
+      if (want && !want.classList.contains(cls)) {
+        want.classList.remove("konna-cursor", "konna-cursor-idle");
+        want.classList.add(cls);
+      }
+    }
+    // rows matching the / search get a marker, like vim's hlsearch
+    const hits = new Set();
+    if (search?.q) {
+      for (const g of search.grids) {
+        if (!g.isConnected) continue;
+        const is = new Set(search.matches.filter((m) => m.grid === g).map((m) => m.i));
+        for (const r of rowsIn(g)) if (is.has(rindex(r))) hits.add(r);
+      }
+    }
+    document.querySelectorAll(".konna-match").forEach((r) => hits.has(r) || r.classList.remove("konna-match"));
+    hits.forEach((r) => r.classList.contains("konna-match") || r.classList.add("konna-match"));
+  }
+  let paintQueued = false;
+  const schedulePaint = () => {
+    if (paintQueued) return;
+    paintQueued = true;
+    requestAnimationFrame(() => { paintQueued = false; paint(); });
+  };
+
+  P.History.listen(() => {
+    endFind();
+    cur.main = null;
+    if (cur.pane === "main") waitForList();
+    paint();
   });
 
   // ---------- ? cheat sheet ----------
@@ -158,13 +343,13 @@
     }
     overlay.appendChild(Object.assign(el("div", "konna-sheet-row"), {}));
     const top = el("div", "konna-sheet-row");
-    top.append(el("span", "konna-key", "g"), el("span", "konna-desc", "top of page"));
+    top.append(el("span", "konna-key", "g"), el("span", "konna-desc", "first item"));
     overlay.appendChild(top);
     document.body.appendChild(overlay);
   }
 
-  // ---------- search ----------
-  function search() {
+  // ---------- spotify's own search (g /) ----------
+  function spotifySearch() {
     const input = $(".Root__globalNav input");
     if (!input) return go("/search");
     input.focus();
@@ -172,8 +357,114 @@
   }
   const setPlaceholder = () => {
     const input = $(".Root__globalNav input");
-    if (input && input.placeholder !== "/ search") input.placeholder = "/ search";
+    if (input && input.placeholder !== "g/ search") input.placeholder = "g/ search";
   };
+
+  // ---------- / find in the list you're in (like vim: jumps while typing, n / N for next / previous) ----------
+  // { pane, grids, q, matches: [{ grid, i }], bar, input, count } while a find is active, else null
+  let search = null;
+  const texts = new WeakMap(); // grid -> Map(rowindex -> lowercased row text)
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  function rowText(r) {
+    const w = document.createTreeWalker(r, NodeFilter.SHOW_TEXT);
+    const parts = [];
+    while (w.nextNode()) parts.push(w.currentNode.nodeValue);
+    return parts.join(" ").toLowerCase();
+  }
+  function record(grid) {
+    let m = texts.get(grid);
+    if (!m) texts.set(grid, (m = new Map()));
+    for (const r of rowsIn(grid)) m.set(rindex(r), rowText(r));
+    return m;
+  }
+  // only on-screen rows exist, so scroll through the list once to read all of them
+  async function scanAll(grid) {
+    const [lo, hi] = bounds(grid);
+    if (record(grid).size >= hi - lo + 1) return;
+    const sc = scrollerOf(grid);
+    if (!sc) return;
+    const top = grid.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop;
+    for (let y = Math.max(0, top - sc.clientHeight / 2); y < top + grid.offsetHeight; y += sc.clientHeight * 0.8) {
+      sc.scrollTop = y;
+      await sleep(40);
+      record(grid);
+    }
+  }
+
+  // list order: which list on the page first, then row
+  const order = (a, b) => search.grids.indexOf(a.grid) - search.grids.indexOf(b.grid) || a.i - b.i;
+  function nextMatch(from, dir, inclusive = false) {
+    const ms = search.matches;
+    if (!ms.length) return null;
+    if (!from) return dir > 0 ? ms[0] : ms.at(-1);
+    if (dir > 0) return ms.find((m) => order(m, from) > (inclusive ? -1 : 0)) ?? ms[0];
+    return ms.findLast((m) => order(m, from) < 0) ?? ms.at(-1);
+  }
+  function showMatch(m) {
+    if (m) select(search.pane, m.grid, m.i);
+    const text = !search.q ? "" : m ? `${search.matches.indexOf(m) + 1}/${search.matches.length}` : "no match";
+    if (search.count) search.count.textContent = text;
+    paint();
+    return text;
+  }
+
+  async function find() {
+    const pane = cur.pane;
+    const gs = grids(pane);
+    if (!gs.length) return spotifySearch(); // nothing to find in here (artist page, …)
+    endFind();
+    const start = cur[pane];
+    const bar = el("div", "konna-cmdline");
+    const input = el("input", "konna-cmdline-input");
+    const count = el("span", "konna-cmdline-count");
+    bar.append(el("span", "konna-key", "/"), input, count);
+    document.body.appendChild(bar);
+    search = { pane, grids: gs, q: "", matches: [], bar, input, count };
+    input.placeholder = "reading list…";
+    input.focus();
+
+    const sc = scrollerOf(gs[0]);
+    const keep = sc?.scrollTop;
+    for (const g of gs) await scanAll(g);
+    if (sc) sc.scrollTop = keep;
+    if (search?.bar !== bar) return; // closed while reading
+    input.placeholder = pane === "lib" ? "find in library" : "find in list";
+
+    const update = () => {
+      search.q = input.value.toLowerCase().trim();
+      search.matches = [];
+      if (search.q)
+        for (const g of gs)
+          for (const [i, t] of [...(texts.get(g) ?? [])].sort((a, b) => a[0] - b[0]))
+            if (t.includes(search.q)) search.matches.push({ grid: g, i });
+      const m = nextMatch(start, 1, true);
+      if (!m && start) select(pane, start.grid, start.i); // nothing matches (yet): stay where you started
+      showMatch(m);
+    };
+    input.addEventListener("input", update);
+    update(); // anything typed while the list was being read
+  }
+  // enter: keep the matches for n / N and go back to normal keys
+  function confirmFind() {
+    search.bar.remove();
+    search.bar = search.input = search.count = null;
+    if (!search.matches.length) {
+      if (search.q) toast("no match");
+      search = null;
+    }
+    paint();
+  }
+  // esc: close it completely, n is next track again
+  function endFind() {
+    if (!search) return;
+    search.bar?.remove();
+    search = null;
+    paint();
+  }
+  function stepMatch(dir) {
+    cur.pane = search.pane;
+    toast(showMatch(nextMatch(cur[search.pane], dir)));
+  }
 
   // ---------- fuzzy playlist picker (like snacks/telescope) ----------
   async function picker() {
@@ -223,6 +514,10 @@
       const it = shown[sel];
       if (!it) return;
       closeOverlay();
+      // land in the song list, like l from the library (the navigation puts the cursor on the first song)
+      cur.pane = "main";
+      cur.main = null;
+      waitForList();
       go(it.path);
       if (play) S.Player.playUri(it.uri);
     }
@@ -301,8 +596,17 @@
     "keydown",
     (e) => {
       if (hintState) { hintKey(e); e.preventDefault(); e.stopPropagation(); return; }
+      if (search?.input && e.target === search.input) {
+        if (e.key === "Escape") endFind();
+        else if (e.key === "Enter") confirmFind();
+        else return;
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
       if (e.key === "Escape") {
         if (overlay) { closeOverlay(); e.preventDefault(); return; }
+        if (search) { endFind(); toast("find cleared"); e.preventDefault(); return; }
         if (typing(document.activeElement)) { document.activeElement.blur(); e.preventDefault(); return; }
       }
       if (typing(e.target) || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -311,7 +615,7 @@
         clearTimeout(pendingG);
         pendingG = null;
         closeOverlay();
-        if (e.key === "g") scrollTo(0);
+        if (e.key === "g") jump(false, () => scrollTo(0));
         else gmap[e.key]?.();
         e.preventDefault();
         e.stopPropagation();
@@ -327,7 +631,8 @@
       const fn = single[e.key];
       if (fn) {
         if (overlay && e.key !== "?") closeOverlay();
-        fn();
+        // false = nothing to act on (e.g. enter with no cursor): let spotify have the key
+        if (fn() === false) return;
         e.preventDefault();
         e.stopPropagation();
       }
@@ -342,6 +647,17 @@
   skipHome();
   P.History.listen(skipHome);
 
+  // spotify saves "collapsed" when it starts in a narrow window; undo that once the library has rendered
+  let uncollapseTries = 0;
+  const uncollapseTimer = setInterval(() => {
+    uncollapseLibrary();
+    if (++uncollapseTries >= 30) clearInterval(uncollapseTimer);
+  }, 500);
+
   setPlaceholder();
-  new MutationObserver(setPlaceholder).observe(document.body, { childList: true, subtree: true });
+  // repaint too: spotify re-renders rows and drops the cursor class
+  new MutationObserver(() => {
+    setPlaceholder();
+    schedulePaint();
+  }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "aria-rowindex"] });
 })();
