@@ -1,0 +1,415 @@
+/* konna — spotify as a terminal app.
+   text only, player bar on top (like noctalia), library left, content right,
+   everything else hidden and reachable from the keyboard (konna-keys.js, press ?) */
+
+/* ---------- type ---------- */
+:root {
+  --font-family: "JetBrainsMono Nerd Font", monospace !important;
+  --kb-line: #2f3440; /* outline: grey with a hint of the border blue */
+}
+body,
+button,
+input,
+.encore-text,
+[class*="encore-text"] {
+  font-family: "JetBrainsMono Nerd Font", monospace !important;
+  letter-spacing: 0 !important;
+}
+
+/* ---------- layout: player on top, then search line, then library | content ---------- */
+.Root,
+.Root__top-container {
+  background-color: #0a0a0a !important;
+}
+.Root__top-container {
+  grid-template-areas:
+    "now-playing-bar now-playing-bar now-playing-bar"
+    "top-banner top-banner top-banner"
+    "global-nav global-nav global-nav"
+    "left-sidebar main-view right-sidebar" !important;
+  grid-template-rows: 56px 0 36px 1fr !important;
+  padding: 10px !important;
+  gap: 10px !important;
+}
+.Root__nav-bar,
+.Root__main-view,
+.Root__right-sidebar,
+.Root__now-playing-bar {
+  border-radius: 10px !important;
+  outline: 1px solid var(--kb-line);
+  outline-offset: -1px;
+  background-color: var(--spice-main) !important;
+}
+
+/* ---------- no pictures anywhere ---------- */
+img,
+.x-entityImage-imageContainer,
+.main-entityHeader-imageContainer,
+.main-entityHeader-imageContainerNew,
+.main-trackList-rowImage,
+.main-nowPlayingWidget-coverArtContainer,
+.main-cardImage-imageWrapper,
+[data-testid="cover-art-button"],
+[data-testid="entity-image"],
+.Root__right-sidebar video,
+.Root__right-sidebar canvas,
+.Root__right-sidebar [style*="background-image"] {
+  display: none !important;
+}
+
+/* ---------- player bar (top) ---------- */
+.Root__now-playing-bar {
+  margin: 0 !important;
+  /* left room for spotify's native "..." window menu, which is drawn over this corner */
+  padding: 4px 14px 4px 44px !important;
+  overflow: hidden;
+}
+.main-nowPlayingBar-nowPlayingBar {
+  background: transparent !important;
+  min-height: 0 !important;
+  height: 48px !important;
+}
+.main-nowPlayingBar-container {
+  min-height: 0 !important;
+}
+/* one line instead of spotify's stacked buttons-over-seekbar, which overlapped in a slim bar:
+   [track]  ⇄ ⏮ ⏯ ⏭ ↻  0:42 ━━━━━━━━━○──── 3:10  [volume] */
+.main-nowPlayingBar-nowPlayingBar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 24px !important;
+}
+.main-nowPlayingBar-left {
+  flex: 0 0 260px !important;
+  min-width: 0 !important;
+  width: auto !important;
+}
+.main-nowPlayingBar-center {
+  flex: 1 1 auto !important;
+  max-width: none !important;
+  width: auto !important;
+}
+.main-nowPlayingBar-right {
+  flex: 0 0 200px !important;
+  min-width: 0 !important;
+  width: auto !important;
+}
+.player-controls {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 18px !important;
+  width: 100% !important;
+}
+/* spotify makes both halves of the button group flex:1, which ate the whole bar */
+.player-controls__buttons,
+.player-controls__left,
+.player-controls__right {
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+}
+.playback-bar {
+  flex: 1 1 auto !important;
+  width: auto !important;
+}
+
+/* only transport, progress and volume stay; the rest is on the keyboard */
+.Root__now-playing-bar [aria-label="Add to playlist"],
+.Root__now-playing-bar [aria-label="Connect to a device"],
+[data-testid="pip-toggle-button"],
+[data-testid="fullscreen-mode-button"],
+[data-testid="lyrics-button"],
+[data-testid="control-button-queue"],
+[data-testid="control-button-npv"],
+.main-nowPlayingWidget-actionButtonWrapper,
+.main-nowPlayingWidget-plusButtonWrapper {
+  display: none !important;
+}
+/* play buttons: outlined instead of a filled white/blue disc */
+[data-testid="control-button-playpause"],
+[data-testid="control-button-playpause"] > span,
+.main-actionBar-ActionBarPlayButtonContainer button,
+.main-actionBar-ActionBarPlayButtonContainer button > span {
+  background-color: transparent !important;
+  color: var(--spice-button) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+[data-testid="control-button-playpause"],
+.main-actionBar-ActionBarPlayButtonContainer button > span {
+  outline: 1px solid var(--kb-line) !important;
+  border-radius: 50% !important;
+}
+.x-progressBar-fillColor,
+.x-progressBar-progressFillColor {
+  background: linear-gradient(90deg, var(--spice-button), var(--spice-button-active)) !important;
+}
+/* unplayed part: grey. the waveform extension masks the bar into the waveform shape
+   (track stays transparent so no box shows behind it) */
+.playback-bar .x-progressBar-progressBarBg {
+  background-color: transparent !important;
+  --bg-color: var(--spice-misc);
+}
+.Root__now-playing-bar [data-testid="volume-bar"] .x-progressBar-progressBarBg {
+  background-color: var(--spice-misc) !important;
+}
+
+/* ---------- search line: just the input, like a command line ---------- */
+.Root__globalNav {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 36px !important;
+  min-height: 0 !important;
+  grid-area: global-nav !important;
+}
+.main-globalNav-historyButtonsContainer,
+.main-globalNav-contentRight,
+.main-globalNav-searchInputKBDWrapper,
+.Root__globalNav [aria-label="Home"],
+.Root__globalNav [aria-label="Marketplace"],
+.Root__globalNav [aria-label="Statistics"],
+.Root__globalNav [aria-label="Browse"],
+.Root__globalNav [aria-label="Search"],
+.Root__globalNav [aria-label="playlist-stats"],
+.Root__globalNav [aria-label="What's New"],
+.Root__globalNav [aria-label="Listening activity"],
+[data-testid="user-widget-link"] {
+  display: none !important;
+}
+.main-globalNav-searchSection,
+.main-globalNav-searchContainer,
+.main-globalNav-searchInputSection,
+.main-globalNav-searchInputContainer,
+.main-globalNav-searchInputWrapper {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+.Root__globalNav input {
+  height: 34px !important;
+  border-radius: 10px !important;
+  background-color: var(--spice-main) !important;
+  border: none !important;
+  outline: 1px solid var(--kb-line) !important;
+  box-shadow: none !important;
+  padding-left: 14px !important;
+  color: var(--spice-text) !important;
+}
+.Root__globalNav input:focus {
+  outline-color: var(--spice-button) !important;
+}
+.Root__globalNav input::placeholder {
+  color: var(--spice-subtext) !important;
+}
+.Root__globalNav svg {
+  display: none !important; /* magnifier and other icons in the search line */
+}
+
+/* ---------- library (left) ---------- */
+.Root__nav-bar [aria-label="Create"],
+.Root__nav-bar [aria-label="Expand Your Library"],
+.Root__nav-bar .main-playButton-PlayButton {
+  display: none !important;
+}
+.Root__nav-bar h1,
+.Root__nav-bar h2 {
+  text-transform: lowercase !important;
+  font-weight: 500 !important;
+}
+.main-yourLibraryX-libraryContainer [role="row"] {
+  border-radius: 6px !important;
+}
+.main-yourLibraryX-libraryContainer [role="row"][aria-selected="true"],
+.main-yourLibraryX-libraryContainer [role="row"]:hover {
+  background-color: var(--spice-highlight) !important;
+}
+
+/* ---------- content (right) ---------- */
+/* spotify tints headers with the artwork's color via inline styles: stay monochrome */
+.main-topBar-background,
+.Root__main-view div[style*="background-color"],
+.Root__right-sidebar div[style*="background-color"] {
+  background-color: var(--spice-main) !important;
+  --background-base: var(--spice-main) !important;
+  background-image: none !important;
+}
+.main-entityHeader-container,
+.main-entityHeader-contentWrapper {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding-top: 20px !important;
+  padding-bottom: 4px !important;
+}
+.main-entityHeader-title h1,
+.main-entityHeader-title span {
+  text-transform: lowercase !important;
+  font-weight: 600 !important;
+  font-size: 2rem !important;
+  line-height: 1.2 !important;
+}
+.main-entityHeader-title h1::before {
+  content: "~/";
+  color: var(--spice-button);
+}
+[data-testid="component-shelf"] h2 {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: baseline !important;
+  text-transform: lowercase !important;
+  font-size: 1.05rem !important;
+  font-weight: 500 !important;
+}
+[data-testid="component-shelf"] h2::before {
+  content: "~/";
+  color: var(--spice-button);
+  margin-right: 2px;
+}
+/* track rows: highlight on hover/selection */
+[role="row"]:hover,
+[role="row"][aria-selected="true"] {
+  background-color: var(--spice-highlight) !important;
+}
+.main-card-card {
+  background: transparent !important;
+  outline: 1px solid var(--kb-line);
+  outline-offset: -1px;
+}
+
+/* ---------- scrollbars ---------- */
+::-webkit-scrollbar-thumb {
+  background-color: var(--spice-misc) !important;
+  border-radius: 8px;
+}
+
+/* ================= konna-keys overlays ================= */
+.konna-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 14vh;
+}
+.konna-sheet,
+.konna-picker,
+.konna-whichkey {
+  background: var(--spice-main);
+  outline: 1px solid var(--kb-line);
+  border-radius: 10px;
+  color: var(--spice-text);
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+}
+.konna-title {
+  color: var(--spice-button);
+  margin-bottom: 12px;
+}
+.konna-sheet {
+  padding: 18px 22px;
+}
+.konna-sheet-grid {
+  display: flex;
+  gap: 36px;
+}
+.konna-sheet-head {
+  color: var(--spice-subtext);
+  margin: 0 0 6px;
+}
+.konna-sheet-row {
+  display: flex;
+  gap: 12px;
+  line-height: 1.75;
+}
+.konna-key {
+  color: var(--spice-button);
+  min-width: 52px;
+}
+.konna-desc {
+  color: var(--spice-text);
+}
+.konna-whichkey {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 10000;
+  padding: 12px 16px;
+}
+.konna-picker {
+  width: min(560px, 80vw);
+  padding: 16px;
+}
+.konna-picker-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #0a0a0a;
+  color: var(--spice-text);
+  border: none;
+  outline: 1px solid var(--spice-button);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font: inherit;
+}
+.konna-picker-list {
+  max-height: 46vh;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+.konna-picker-row {
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.konna-picker-row.sel {
+  background: var(--spice-highlight);
+  color: var(--spice-button);
+}
+.konna-picker-row.sel::before {
+  content: "› ";
+}
+.konna-picker-hint {
+  color: var(--spice-subtext);
+  font-size: 11px;
+  margin-top: 10px;
+}
+.konna-hints {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  pointer-events: none;
+}
+.konna-hint {
+  position: fixed;
+  background: var(--spice-button);
+  color: #0a0a0a;
+  font: 600 11px "JetBrainsMono Nerd Font", monospace;
+  padding: 1px 5px;
+  border-radius: 4px;
+  text-transform: lowercase;
+}
+.konna-hint.dim {
+  opacity: 0.15;
+}
+.konna-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 10002;
+  background: var(--spice-main);
+  outline: 1px solid var(--kb-line);
+  color: var(--spice-text);
+  font: 12px "JetBrainsMono Nerd Font", monospace;
+  padding: 6px 14px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  pointer-events: none;
+}
+.konna-toast.show {
+  opacity: 1;
+}
