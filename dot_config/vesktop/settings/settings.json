@@ -47,7 +47,7 @@
             "enabled": true
         },
         "AccountPanelServerProfile": {
-            "enabled": false
+            "enabled": true
         },
         "AlwaysAnimate": {
             "enabled": true
@@ -76,7 +76,8 @@
             "closeAllFolders": false,
             "forceOpen": false,
             "closeOthers": false,
-            "sidebarAnim": true
+            "sidebarAnim": true,
+            "closeServerFolder": false
         },
         "BetterGifAltText": {
             "enabled": true
@@ -154,7 +155,7 @@
             "enabled": false
         },
         "CustomRPC": {
-            "enabled": true,
+            "enabled": false,
             "type": 0,
             "appID": "1238981186035122257",
             "appName": "kafka",
@@ -170,7 +171,8 @@
             "buttonOneURL": "https://github.com/konnatoad/kafkaBot",
             "buttonTwoText": "toad",
             "buttonTwoURL": "https://github.com/konnatoad",
-            "timestampMode": 2
+            "timestampMode": 2,
+            "enablePresence": true
         },
         "CustomIdle": {
             "enabled": false
@@ -275,9 +277,6 @@
         "KeepCurrentChannel": {
             "enabled": false
         },
-        "LastFMRichPresence": {
-            "enabled": false
-        },
         "LoadingQuotes": {
             "enabled": false
         },
@@ -313,7 +312,8 @@
             "ignoreGuilds": "",
             "logEdits": true,
             "logDeletes": true,
-            "inlineEdits": true
+            "inlineEdits": true,
+            "logDeletedAttachments": true
         },
         "MoreCommands": {
             "enabled": false
@@ -702,7 +702,8 @@
         },
         "Settings": {
             "enabled": true,
-            "settingsLocation": "aboveNitro"
+            "settingsLocation": "aboveNitro",
+            "includeVencordInfoWhenCopying": true
         },
         "SupportHelper": {
             "enabled": true
@@ -734,7 +735,9 @@
             "showFullUrl": false
         },
         "WebKeybinds": {
-            "enabled": true
+            "enabled": true,
+            "showNavigationButtons": true,
+            "overrideCommonKeybinds": true
         },
         "WebScreenShareFixes": {
             "enabled": true
@@ -754,6 +757,33 @@
         },
         "NoDefaultHangStatus": {
             "enabled": false
+        },
+        "MusicRichPresence": {
+            "enabled": false
+        },
+        "AddAttachments": {
+            "enabled": true
+        },
+        "CharacterCounter": {
+            "enabled": false
+        },
+        "GifProviderSwitcher": {
+            "enabled": false
+        },
+        "NoMiddleClickPaste": {
+            "enabled": false
+        },
+        "ConcatenatedComponentExtractor": {
+            "enabled": true
+        },
+        "ContextMenuAPI": {
+            "enabled": true
+        },
+        "FixDiscordCss": {
+            "enabled": true
+        },
+        "NoticesAPI": {
+            "enabled": true
         }
     },
     "notifications": {
@@ -766,11 +796,13 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1773763296849
+        "settingsSyncVersion": 1792349629787
     },
     "eagerPatches": false,
     "uiElements": {
         "chatBarButtons": {},
         "messagePopoverButtons": {}
-    }
+    },
+    "windowsMaterial": "none",
+    "nativeTitleBar": false
 }

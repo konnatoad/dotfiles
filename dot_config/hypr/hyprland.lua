@@ -144,6 +144,12 @@ hl.window_rule({
     match   = { class = "^Spotify$" },
     opacity = "0.9",
 })
+-- keep vesktop at a fixed 1.0 so focusing it on hover doesn't change how see-through it looks
+hl.window_rule({
+    name    = "vesktop-no-focus-dim",
+    match   = { class = "^vesktop$" },
+    opacity = "1.0 override 1.0 override",
+})
 
 local mainMod = "SUPER"
 

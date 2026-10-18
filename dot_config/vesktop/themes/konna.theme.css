@@ -1,122 +1,188 @@
 /**
  * @name konna
  * @author konna
- * @version 1.0.0
- * @description discord with the same feel as the rest of the desktop: terminal type, near-black greys,
- * blue/lavender accents, floating outlined panels. keeps all colors, images and avatars.
+ * @version 2.0.0
+ * @description fluent's layout with the rest of the desktop's feel on top: terminal type, blue accent,
+ * ~/ section titles, and the desktop wallpaper as fluent's blurred acrylic background.
  */
 
-/* ---------- palette (same values as noctalia monochrome / ghostty / nvim / spotify) ---------- */
-:root,
-.theme-dark,
-.theme-midnight {
-  /* only backgrounds are see-through (vesktop's transparent window), so images/avatars stay solid.
-     panels sit on top of the backdrop, so the alphas stack: 1 - (1-0.6)*(1-0.75) = 0.9,
-     i.e. the same 90% as spotify's window opacity */
-  --konna-backdrop: rgba(10, 10, 10, 0.6);
-  --konna-panel: rgba(19, 19, 19, 0.75);
-  --konna-raised: #1f1f1f;
-  --konna-hover: #262626;
-  --konna-line: #2f3440; /* grey with a hint of the border blue */
-  --konna-text: #e2e2e2;
-  --konna-subtext: #919191;
-  --konna-blue: #89b4fa;
-  --konna-lavender: #b4befe;
+/* fluent provides the layout; everything below only adjusts the feel */
+@import url(https://takosthings.github.io/Fluent-Discord/Fluent-Discord.css);
 
-  /* fonts: same as terminal and nvim */
+:root {
+  /* ---------- fluent options ---------- */
+  /* accent = the window-border blue #89b4fa */
+  --fluent-accent-hue-sat: 217, 92%;
+  --fluent-accent-lightness: 76%;
+  --fluent-text-on-accent-color: 10, 10, 10;
+  /* no acrylic picture: the window is really transparent, see the backdrop block below */
+  --fluent-acrylic-background: none;
+  --fluent-acrylic-background-blur: 24px;
+  --fluent-acrylic-background-dimness: 78%;
+  --fluent-acrylic-background-saturate: 100%; /* wallpaper is greyscale; keep it that way */
+  --fluent-guilds-icon-size: 24px;
+  --fluent-show-avatar-decorations: none;
+
+  /* ---------- konna feel ---------- */
+  --konna-blue: #89b4fa;
+  --konna-line: #2f3440;
   --font-primary: "JetBrainsMono Nerd Font", monospace;
   --font-display: "JetBrainsMono Nerd Font", monospace;
   --font-headline: "JetBrainsMono Nerd Font", monospace;
   --font-code: "JetBrainsMono Nerd Font", monospace;
-
-  /* discord surfaces -> konna greys (only backgrounds, never content colors) */
-  --background-base-lowest: var(--konna-backdrop);
-  --background-base-lower: var(--konna-panel);
-  --background-base-low: var(--konna-panel);
-  --background-surface-high: var(--konna-raised);
-  --background-surface-higher: var(--konna-hover);
-  --chat-background-default: transparent;
-  --app-frame-background: transparent;
-  --border-subtle: var(--konna-line);
-  --text-default: var(--konna-text);
-  --text-muted: var(--konna-subtext);
-  --channels-default: var(--konna-subtext);
-  --interactive-normal: #b5b5b5;
-  --interactive-hover: var(--konna-text);
-  --interactive-active: var(--konna-text);
-
-  /* accent: blue instead of blurple; role colors, emoji and images are untouched */
-  --brand-500: var(--konna-blue);
-  --brand-560: var(--konna-lavender);
-  --brand-experiment: var(--konna-blue);
   --text-link: var(--konna-blue);
-  --control-brand-foreground: var(--konna-blue);
-  --control-brand-foreground-new: var(--konna-blue);
 }
 
-/* ---------- backdrop ---------- */
-/* base layers must be clear or the transparent window just shows black */
-html,
-body,
-#app-mount,
-[class*="appMount__"],
-[class*="appAsidePanelWrapper_"],
-[class*="notAppAsidePanel_"],
-[class*="app_"]:not([class*="app__"]),
-[class*="layers__"],
-[class*="layer__"],
-[class*="bg__"],
-[class*="app__"],
-[class*="base__"],
-[class*="container__"] > [class*="base__"] {
+/* ---------- konna palette over fluent's colors ----------
+   fluent keeps the layout; surfaces go to the same near-black greys as the terminal,
+   nvim and spotify. !important because fluent sets these on the theme classes. */
+:root,
+.theme-dark,
+.theme-midnight,
+.theme-dark .theme-dark,
+.visual-refresh .theme-dark {
+  /* discord paints these under/inside the panels; they must be clear or they stack on top of the
+     two real layers (backdrop + panel, see "real transparency") and make everything ~solid */
+  --background-base-lowest: transparent !important;
+  --background-base-lower: transparent !important;
+  --background-base-low: transparent !important;
+  --background-surface-high: #1f1f1f !important;
+  --background-surface-higher: #262626 !important;
+  --chat-background-default: transparent !important;
+  --border-subtle: var(--konna-line) !important;
+  --text-default: #e2e2e2 !important;
+  --text-muted: #919191 !important;
+  --channels-default: #919191 !important;
+  --brand-500: var(--konna-blue) !important;
+  --brand-560: #b4befe !important;
+  --text-link: var(--konna-blue) !important;
+}
+
+/* ---------- real transparency ----------
+   fluent paints a picture + 78% dark overlay under everything (.bg), which hid the desktop.
+   remove it so the transparent window shows through. alphas stack:
+   backdrop 0.5 + panels 0.7 -> 1 - 0.5*0.3 = 0.85 (no blur on this monitor, so a touch more see-through
+   than spotify's 0.9 to actually be noticeable) */
+.theme-dark [class*="bg__960e4"],
+.theme-dark [class*="bg__960e4"]::before {
+  background: none !important;
+  filter: none !important;
+}
+.theme-dark [class*="content_f75fb0"],
+.theme-dark main[class*="chatContent_"] {
   background: transparent !important;
 }
-[class*="app__"] {
-  background: var(--konna-backdrop) !important;
+
+/* hovers stay see-through too (they were solid greys) */
+.theme-dark {
+  --background-modifier-hover: rgba(255, 255, 255, 0.05) !important;
+  --background-modifier-selected: rgba(255, 255, 255, 0.08) !important;
+  --background-message-hover: rgba(255, 255, 255, 0.04) !important;
+}
+.theme-dark li[class*="messageListItem_"] > [class*="message__"]:hover:not([class*="mentioned_"]) {
+  background: rgba(255, 255, 255, 0.04) !important;
 }
 
-/* ---------- floating panels with gaps, like hyprland windows ---------- */
-[class*="content__"]:has(> [class*="sidebar__"]) {
-  gap: 10px;
-  padding: 0 10px 10px;
+/* ---------- spotify structure: floating outlined panels with gaps over a near-black backdrop ---------- */
+.theme-dark [class*="content__5e434"] {
+  background: rgba(10, 10, 10, 0.5) !important;
+  padding: 0 10px 10px !important;
+  gap: 10px !important;
   box-sizing: border-box;
 }
-[class*="sidebar__"]:has(> nav[class*="guilds__"]) {
-  gap: 10px;
+.theme-dark [class*="sidebar__5e434"] {
+  gap: 10px !important;
   overflow: visible !important;
 }
-nav[class*="guilds__"],
-[class*="sidebarList__"],
-[class*="chat_"]:has(> [class*="subtitleContainer_"]),
-[class*="page__"] > div > [class*="container_"],
-section[class*="panels__"] {
+.theme-dark [class*="sidebar__5e434"]::after {
+  display: none !important; /* fluent's divider line, the gap does that job now */
+}
+.theme-dark nav[class*="guilds__"],
+.theme-dark [class*="sidebarList__"],
+.theme-dark [class*="chat_"]:has(> [class*="subtitleContainer_"]),
+.theme-dark section[class*="panels__"] {
+  background: rgba(19, 19, 19, 0.7) !important;
   border-radius: 10px !important;
   outline: 1px solid var(--konna-line);
   outline-offset: -1px;
   overflow: hidden;
 }
-nav[class*="guilds__"],
-[class*="sidebarList__"] nav,
-[class*="chat_"]:has(> [class*="subtitleContainer_"]),
-section[class*="panels__"] {
-  background: var(--konna-panel) !important;
+/* the user/player panel floats over the end of the channel/dm list; keep it nearly solid
+   so list rows don't show through it */
+.theme-dark section[class*="panels__"] {
+  background: #131313 !important;
+  z-index: 100 !important; /* the list rows were being drawn on top of it */
 }
-[class*="sidebarList__"] {
-  border: none !important;
-}
-/* the chat and member list sit inside one panel; members get a thin divider instead of a different fill */
-[class*="chatContent_"],
-[class*="members_"],
-[class*="container_"]:has(> aside[class*="membersWrap_"]) {
+/* chat, header and member list share the chat panel; members get a thin divider */
+.theme-dark [class*="content_f75fb0"],
+.theme-dark main[class*="chatContent_"],
+.theme-dark section[class*="title_"][aria-label="Channel header"],
+.theme-dark [class*="container_"]:has(> aside[class*="membersWrap_"]),
+.theme-dark aside[class*="membersWrap_"],
+.theme-dark [class*="members_"] {
   background: transparent !important;
 }
-aside[class*="membersWrap_"] {
-  border-left: 1px solid var(--konna-line);
-}
-section[class*="title_"][aria-label="Channel header"] {
-  background: transparent !important;
+.theme-dark section[class*="title_"][aria-label="Channel header"] {
   border-bottom: 1px solid var(--konna-line) !important;
   box-shadow: none !important;
+}
+.theme-dark aside[class*="membersWrap_"] {
+  border-left: 1px solid var(--konna-line);
+}
+
+/* channel rows: like the spotify library rows */
+.theme-dark [class*="containerDefault_"] [class*="link_"] {
+  border-radius: 6px !important;
+}
+.theme-dark [class*="containerDefault_"] [class*="link_"]:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+.theme-dark [class*="selected_"] [class*="link_"] {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+.theme-dark [class*="selected_"] [class*="link_"]::before {
+  display: none !important; /* fluent's accent pill on the selected channel */
+}
+
+/* channel title: ~/general, like the spotify headers */
+.theme-dark section[aria-label="Channel header"] h1::before {
+  content: "~/";
+  color: var(--konna-blue);
+}
+
+/* mentions: blue tint and bar instead of fluent's mustard + yellow */
+.theme-dark [class*="mentioned_"] {
+  background: rgba(137, 180, 250, 0.07) !important;
+}
+.theme-dark [class*="mentioned_"]:hover {
+  background: rgba(137, 180, 250, 0.11) !important;
+}
+.theme-dark [class*="mentioned_"]::before {
+  background: var(--konna-blue) !important;
+}
+
+/* embeds (link previews): konna surface, left edge in the outline color */
+.theme-dark article[class*="embedFull_"] {
+  background: rgba(31, 31, 31, 0.9) !important;
+  border-left-color: var(--konna-line) !important;
+  border-radius: 8px !important;
+}
+/* message box: faint outline always; when focused, just a thin blue -> lavender line along
+   the bottom, the same gradient as the spotify seek bar (replaces fluent's thick accent border) */
+.theme-dark form[class*="form_"] [class*="channelTextArea_"] {
+  outline: 1px solid var(--konna-line);
+  border-radius: 10px !important;
+  border-bottom-width: 1px !important;
+}
+.theme-dark form[class*="form_"] [class*="channelTextArea_"]:focus-within {
+  border-bottom-color: rgba(255, 255, 255, 0.0698) !important;
+  background-image: linear-gradient(90deg, #89b4fa, #b4befe) !important;
+  background-size: calc(100% - 20px) 1px !important;
+  background-position: center bottom !important;
+  background-repeat: no-repeat !important;
+}
+[class*="selected_"] [class*="name_"] {
+  color: var(--konna-blue) !important;
 }
 
 /* ---------- small lowercase section titles with the ~/ touch ---------- */
@@ -138,51 +204,13 @@ li[class*="containerDefault__"] [class*="name__"]::before {
   color: var(--konna-blue);
 }
 
-/* ---------- channels and rows ---------- */
-[class*="containerDefault_"] [class*="link_"] {
-  border-radius: 6px !important;
-}
-[class*="selected_"] [class*="link_"],
-[class*="containerDefault_"] [class*="link_"]:hover {
-  background: var(--konna-hover) !important;
-}
-[class*="selected_"] [class*="name_"] {
-  color: var(--konna-blue) !important;
-}
-
-/* ---------- message box: outlined like the spotify search line ---------- */
-form[class*="form_"] [class*="channelTextArea_"],
-form[class*="form_"] [class*="scrollableContainer_"] {
-  background: var(--konna-raised) !important;
-  border-radius: 10px !important;
-  outline: 1px solid var(--konna-line);
-}
-form[class*="form_"] [class*="channelTextArea_"]:focus-within {
-  outline-color: var(--konna-blue);
-}
-
-/* ---------- autocomplete (:emoji, @mentions, /commands) ---------- */
-/* the recolored surfaces made the selected row the same grey as the popup, so arrow-key
-   selection looked dead; mark it explicitly via aria-selected so it can't blend in */
+/* ---------- autocomplete (:emoji, @mentions, /commands): always-visible selection ---------- */
 [role="listbox"] [role="option"][aria-selected="true"],
 [class*="autocomplete"] [aria-selected="true"],
 [class*="autocomplete"] [class*="selected_"] {
   background: rgba(137, 180, 250, 0.16) !important;
   box-shadow: inset 2px 0 0 var(--konna-blue) !important;
   border-radius: 6px !important;
-}
-[class*="autocomplete"] [aria-selected="true"] [class*="title"],
-[class*="autocomplete"] [class*="selected_"] [class*="title"] {
-  color: var(--konna-blue) !important;
-}
-
-/* ---------- popouts, menus, modals ---------- */
-[class*="menu_"],
-[class*="popout_"],
-[class*="userPopoutOuter_"],
-[class*="focusLock_"] [role="dialog"] {
-  border-radius: 10px !important;
-  outline: 1px solid var(--konna-line);
 }
 
 /* ---------- scrollbars: thin and grey ---------- */
