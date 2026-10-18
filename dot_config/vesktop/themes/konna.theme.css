@@ -1,0 +1,193 @@
+/**
+ * @name konna
+ * @author konna
+ * @version 1.0.0
+ * @description discord with the same feel as the rest of the desktop: terminal type, near-black greys,
+ * blue/lavender accents, floating outlined panels. keeps all colors, images and avatars.
+ */
+
+/* ---------- palette (same values as noctalia monochrome / ghostty / nvim / spotify) ---------- */
+:root,
+.theme-dark,
+.theme-midnight {
+  /* only backgrounds are see-through (vesktop's transparent window), so images/avatars stay solid.
+     panels sit on top of the backdrop, so the alphas stack: 1 - (1-0.6)*(1-0.75) = 0.9,
+     i.e. the same 90% as spotify's window opacity */
+  --konna-backdrop: rgba(10, 10, 10, 0.6);
+  --konna-panel: rgba(19, 19, 19, 0.75);
+  --konna-raised: #1f1f1f;
+  --konna-hover: #262626;
+  --konna-line: #2f3440; /* grey with a hint of the border blue */
+  --konna-text: #e2e2e2;
+  --konna-subtext: #919191;
+  --konna-blue: #89b4fa;
+  --konna-lavender: #b4befe;
+
+  /* fonts: same as terminal and nvim */
+  --font-primary: "JetBrainsMono Nerd Font", monospace;
+  --font-display: "JetBrainsMono Nerd Font", monospace;
+  --font-headline: "JetBrainsMono Nerd Font", monospace;
+  --font-code: "JetBrainsMono Nerd Font", monospace;
+
+  /* discord surfaces -> konna greys (only backgrounds, never content colors) */
+  --background-base-lowest: var(--konna-backdrop);
+  --background-base-lower: var(--konna-panel);
+  --background-base-low: var(--konna-panel);
+  --background-surface-high: var(--konna-raised);
+  --background-surface-higher: var(--konna-hover);
+  --chat-background-default: transparent;
+  --app-frame-background: transparent;
+  --border-subtle: var(--konna-line);
+  --text-default: var(--konna-text);
+  --text-muted: var(--konna-subtext);
+  --channels-default: var(--konna-subtext);
+  --interactive-normal: #b5b5b5;
+  --interactive-hover: var(--konna-text);
+  --interactive-active: var(--konna-text);
+
+  /* accent: blue instead of blurple; role colors, emoji and images are untouched */
+  --brand-500: var(--konna-blue);
+  --brand-560: var(--konna-lavender);
+  --brand-experiment: var(--konna-blue);
+  --text-link: var(--konna-blue);
+  --control-brand-foreground: var(--konna-blue);
+  --control-brand-foreground-new: var(--konna-blue);
+}
+
+/* ---------- backdrop ---------- */
+/* base layers must be clear or the transparent window just shows black */
+html,
+body,
+#app-mount,
+[class*="appMount__"],
+[class*="appAsidePanelWrapper_"],
+[class*="notAppAsidePanel_"],
+[class*="app_"]:not([class*="app__"]),
+[class*="layers__"],
+[class*="layer__"],
+[class*="bg__"],
+[class*="app__"],
+[class*="base__"],
+[class*="container__"] > [class*="base__"] {
+  background: transparent !important;
+}
+[class*="app__"] {
+  background: var(--konna-backdrop) !important;
+}
+
+/* ---------- floating panels with gaps, like hyprland windows ---------- */
+[class*="content__"]:has(> [class*="sidebar__"]) {
+  gap: 10px;
+  padding: 0 10px 10px;
+  box-sizing: border-box;
+}
+[class*="sidebar__"]:has(> nav[class*="guilds__"]) {
+  gap: 10px;
+  overflow: visible !important;
+}
+nav[class*="guilds__"],
+[class*="sidebarList__"],
+[class*="chat_"]:has(> [class*="subtitleContainer_"]),
+[class*="page__"] > div > [class*="container_"],
+section[class*="panels__"] {
+  border-radius: 10px !important;
+  outline: 1px solid var(--konna-line);
+  outline-offset: -1px;
+  overflow: hidden;
+}
+nav[class*="guilds__"],
+[class*="sidebarList__"] nav,
+[class*="chat_"]:has(> [class*="subtitleContainer_"]),
+section[class*="panels__"] {
+  background: var(--konna-panel) !important;
+}
+[class*="sidebarList__"] {
+  border: none !important;
+}
+/* the chat and member list sit inside one panel; members get a thin divider instead of a different fill */
+[class*="chatContent_"],
+[class*="members_"],
+[class*="container_"]:has(> aside[class*="membersWrap_"]) {
+  background: transparent !important;
+}
+aside[class*="membersWrap_"] {
+  border-left: 1px solid var(--konna-line);
+}
+section[class*="title_"][aria-label="Channel header"] {
+  background: transparent !important;
+  border-bottom: 1px solid var(--konna-line) !important;
+  box-shadow: none !important;
+}
+
+/* ---------- small lowercase section titles with the ~/ touch ---------- */
+li[class*="containerDefault__"] [class*="name__"],
+[class*="membersGroup_"] h3,
+[class*="membersGroup_"] span {
+  text-transform: lowercase !important;
+  letter-spacing: 0 !important;
+  font-weight: 500 !important;
+}
+/* row layout so ~/ sits next to the title (discord wraps the text in a block child) */
+li[class*="containerDefault__"] [class*="name__"] {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: baseline !important;
+}
+li[class*="containerDefault__"] [class*="name__"]::before {
+  content: "~/";
+  color: var(--konna-blue);
+}
+
+/* ---------- channels and rows ---------- */
+[class*="containerDefault_"] [class*="link_"] {
+  border-radius: 6px !important;
+}
+[class*="selected_"] [class*="link_"],
+[class*="containerDefault_"] [class*="link_"]:hover {
+  background: var(--konna-hover) !important;
+}
+[class*="selected_"] [class*="name_"] {
+  color: var(--konna-blue) !important;
+}
+
+/* ---------- message box: outlined like the spotify search line ---------- */
+form[class*="form_"] [class*="channelTextArea_"],
+form[class*="form_"] [class*="scrollableContainer_"] {
+  background: var(--konna-raised) !important;
+  border-radius: 10px !important;
+  outline: 1px solid var(--konna-line);
+}
+form[class*="form_"] [class*="channelTextArea_"]:focus-within {
+  outline-color: var(--konna-blue);
+}
+
+/* ---------- autocomplete (:emoji, @mentions, /commands) ---------- */
+/* the recolored surfaces made the selected row the same grey as the popup, so arrow-key
+   selection looked dead; mark it explicitly via aria-selected so it can't blend in */
+[role="listbox"] [role="option"][aria-selected="true"],
+[class*="autocomplete"] [aria-selected="true"],
+[class*="autocomplete"] [class*="selected_"] {
+  background: rgba(137, 180, 250, 0.16) !important;
+  box-shadow: inset 2px 0 0 var(--konna-blue) !important;
+  border-radius: 6px !important;
+}
+[class*="autocomplete"] [aria-selected="true"] [class*="title"],
+[class*="autocomplete"] [class*="selected_"] [class*="title"] {
+  color: var(--konna-blue) !important;
+}
+
+/* ---------- popouts, menus, modals ---------- */
+[class*="menu_"],
+[class*="popout_"],
+[class*="userPopoutOuter_"],
+[class*="focusLock_"] [role="dialog"] {
+  border-radius: 10px !important;
+  outline: 1px solid var(--konna-line);
+}
+
+/* ---------- scrollbars: thin and grey ---------- */
+::-webkit-scrollbar-thumb,
+[class*="scroller"]::-webkit-scrollbar-thumb {
+  background-color: #383838 !important;
+  border-radius: 8px !important;
+}

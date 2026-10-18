@@ -2,10 +2,10 @@
     "autoUpdate": true,
     "autoUpdateNotification": true,
     "useQuickCss": true,
-    "themeLinks": [
-        "https://takosthings.github.io/Fluent-Discord/Fluent-Discord.theme.css"
+    "themeLinks": [],
+    "enabledThemes": [
+        "konna.theme.css"
     ],
-    "enabledThemes": [],
     "enableReactDevtools": false,
     "frameless": false,
     "transparent": true,
@@ -212,10 +212,10 @@
             "enabled": false
         },
         "FixSpotifyEmbeds": {
-            "enabled": false
+            "enabled": true
         },
         "FixYoutubeEmbeds": {
-            "enabled": false
+            "enabled": true
         },
         "ForceOwnerCrown": {
             "enabled": true
@@ -314,10 +314,6 @@
             "logEdits": true,
             "logDeletes": true,
             "inlineEdits": true
-        },
-        "MessageTags": {
-            "enabled": true,
-            "tagsList": {}
         },
         "MoreCommands": {
             "enabled": false
@@ -751,6 +747,13 @@
         },
         "MoreQuickReactions": {
             "enabled": false
+        },
+        "CustomCommands": {
+            "enabled": true,
+            "tagsList": {}
+        },
+        "NoDefaultHangStatus": {
+            "enabled": false
         }
     },
     "notifications": {
@@ -763,7 +766,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1772721860522
+        "settingsSyncVersion": 1773763296849
     },
     "eagerPatches": false,
     "uiElements": {
