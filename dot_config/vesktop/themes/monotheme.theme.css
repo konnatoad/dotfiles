@@ -224,13 +224,15 @@ li[class*="containerDefault__"] [class*="name__"]::before {
    user settings open as a full-window dialog in discord's popup layer (not a second app layer).
    with the base-low* backgrounds cleared above it had nothing behind it, so the dm list and
    friends tabs showed straight through the settings text. give it its own dark acrylic: the ui
-   behind is blurred and mostly hidden, the desktop still shows faintly. */
-.theme-dark [class*="layerContainer_"] [role="dialog"]:has(nav) {
+   behind is blurred and mostly hidden, the desktop still shows faintly.
+   the emoji/gif/sticker picker is also a dialog with a nav (its tabs), so it's excluded or it
+   gets a big dark blurred box behind it. */
+.theme-dark [class*="layerContainer_"] [role="dialog"]:has(nav):not(:has([id^="emoji-picker"], [id^="gif-picker"], [id^="sticker-picker"], [class*="expressionPicker"])) {
   background: rgba(10, 10, 10, 0.88) !important;
   backdrop-filter: blur(24px) !important;
 }
 /* the sidebar gets the same panel tone as the guild/channel lists */
-.theme-dark [class*="layerContainer_"] [role="dialog"]:has(nav) nav {
+.theme-dark [class*="layerContainer_"] [role="dialog"]:has(nav):not(:has([id^="emoji-picker"], [id^="gif-picker"], [id^="sticker-picker"], [class*="expressionPicker"])) nav {
   background: rgba(19, 19, 19, 0.7) !important;
   border-right: 1px solid var(--konna-line);
 }
