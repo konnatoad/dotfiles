@@ -25,5 +25,5 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply konnatoad
 ### Full setup (dotfiles + tools)
 
 ```bash
-sh -c "$(curl -sS https://raw.githubusercontent.com/konnatoad/dotfiles/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/konnatoad/dotfiles/main/install.sh)"
 ```

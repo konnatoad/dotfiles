@@ -1,58 +1,62 @@
 #!/bin/bash
+# fresh arch install -> this setup. safe to re-run.
+# usage: bash -c "$(curl -fsSL https://raw.githubusercontent.com/konnatoad/dotfiles/main/install.sh)"
+set -euo pipefail
 
-error() {
-  echo "[ERROR] $1"
-  exit 1
-}
+src="$HOME/.local/share/chezmoi"
 
-# install chezmoi, git, yay and zsh
-sudo pacman -S --needed git base-devel chezmoi zsh && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
+log() { printf '\033[1;34m::\033[0m %s\n' "$1"; }
+die() { printf '\033[1;31merror:\033[0m %s\n' "$1" >&2; exit 1; }
 
-# Initialize chezmoi
-chezmoi init github.com/konnatoad/dotfiles || error "Failed to init chezmoi"
+[[ $EUID -ne 0 ]] || die "run as your user, not root"
 
-# install starship
-curl -sS https://starship.rs/install.sh | sh
+# steam and the lib32 packages live in multilib
+if ! grep -q '^\[multilib\]' /etc/pacman.conf; then
+    log "enabling multilib"
+    sudo sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' /etc/pacman.conf
+fi
 
-# Apply dotfiles
-chezmoi apply -R || error "Failed to apply dotfiles"
+log "installing base tools"
+sudo pacman -Syu --needed --noconfirm git base-devel chezmoi
 
-# Install the custom keyboard layout
-sudo cp ~/.local/share/chezmoi/setup/custom_fi /usr/share/X11/xkb/symbols/
+if ! command -v yay >/dev/null; then
+    log "installing yay"
+    tmp="$(mktemp -d)"
+    trap 'rm -rf "$tmp"' EXIT
+    git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin"
+    (cd "$tmp/yay-bin" && makepkg -si --noconfirm)
+fi
 
-# Install AUR packages
-yes | yay -S --needed --noconfirm --answerdiff=None --answerclean=None - <~/.local/share/chezmoi/setup/aur_packages.txt
-
-# install ohmyzsh and plugins
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-  echo "Getting ohmyz.sh"
-  RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" ""
-  echo "✓ oh-my-zsh installed successfully."
+if [[ -d "$src/.git" ]]; then
+    log "updating dotfiles"
+    chezmoi git -- pull --ff-only
 else
-  echo ".oh-my-zsh already found, skipping."
+    log "cloning dotfiles"
+    chezmoi init konnatoad
 fi
 
-if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ]; then
-  echo "Getting zsh-autosuggestions"
-  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-else
-  echo "zsh-autosuggestions already present, skipping."
+log "installing packages"
+yay -S --needed --noconfirm --answerdiff None --answerclean None - < "$src/setup/packages.txt" \
+    || die "package install failed, fix the list in $src/setup/packages.txt and re-run"
+
+log "applying dotfiles"
+chezmoi apply
+
+if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+    log "installing oh-my-zsh"
+    RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
-if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]; then
-  echo "Getting zsh-syntax-highlighting"
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-else
-  echo "zsh-syntax-highlighting already present, skipping."
+plugins="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
+for repo in zsh-users/zsh-autosuggestions zsh-users/zsh-syntax-highlighting; do
+    [[ -d "$plugins/${repo#*/}" ]] || git clone --depth 1 "https://github.com/$repo" "$plugins/${repo#*/}"
+done
+
+rustup toolchain list | grep -q . || rustup default stable
+
+if [[ "$(getent passwd "$USER" | cut -d: -f7)" != /usr/bin/zsh ]]; then
+    log "setting zsh as login shell"
+    chsh -s /usr/bin/zsh
 fi
 
-# set zsh as shell
-chsh -s /usr/bin/zsh
-
-if ! command -v cargo &>/dev/null; then
-  curl https://sh.rustup.rs/ -sSf | sh
-fi
-
-source $HOME/.cargo/env
-
-echo "All done."
+log "done, log out and back in"
