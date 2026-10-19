@@ -5,3 +5,7 @@ dot_config/vesktop/SingletonLock
 dot_config/vesktop/SingletonSocket
 dot_config/vesktop/state.json
 dot_config/spicetify/config-xpui.ini
+
+# api keys, never commit
+dot_secrets/
+*.env

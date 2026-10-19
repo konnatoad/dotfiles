@@ -180,9 +180,9 @@ hl.bind(mainMod .. " + ALT + J", hl.dsp.layout("togglesplit"))
 
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 
-hl.bind("CTRL + Print", hl.dsp.exec_cmd([[grim -g "$(slurp)" ~/Pictures/Screenshots/area_$(date +%Y%m%d_%H%M%S).png && wl-copy < ~/Pictures/Screenshots/$(ls -t ~/Pictures/Screenshots | grep area_ | head -n1)]]))
+hl.bind("CTRL + Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh area"))
 
-hl.bind("ALT + Print", hl.dsp.exec_cmd([[grim /home/konna/Pictures/Screenshots/full_$(date +%Y%m%d_%H%M%S).png && wl-copy < /home/konna/Pictures/Screenshots/$(ls -t /home/konna/Pictures/Screenshots | grep full_ | head -n1)]]))
+hl.bind("ALT + Print",  hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh full"))
 
 hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + l", hl.dsp.focus({ direction = "right" }))
