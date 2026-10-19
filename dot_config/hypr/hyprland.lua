@@ -23,10 +23,8 @@ local browser     = "zen-browser"
 hl.on("hyprland.start", function()
     hl.exec_cmd("hyprctl dispatch 'hl.dsp.focus({ workspace = 1 })'")
 
-    -- noctalia replaces waybar + hyprpaper; to go back, swap these lines
+    -- noctalia is the bar, wallpaper, launcher and notifications
     hl.exec_cmd("noctalia -d")
-    -- hl.exec_cmd("waybar")
-    -- hl.exec_cmd("~/.config/hypr/start-hyprpaper.sh")
 end)
 
 hl.env("XCURSOR_SIZE", "24")
@@ -35,7 +33,7 @@ hl.env("HYPRCURSOR_SIZE", "24")
 hl.config({
     general = {
         gaps_in  = 5,
-        gaps_out = { top = 6, right = 8, bottom = 8, left = 8 }, -- top sits under waybar
+        gaps_out = { top = 6, right = 8, bottom = 8, left = 8 }, -- top sits under the bar
 
         border_size = 2,
 
@@ -87,7 +85,7 @@ hl.config({
     },
 
     misc = {
-        force_default_wallpaper = 0,    -- hyprpaper handles the wallpaper
+        force_default_wallpaper = 0,    -- noctalia handles the wallpaper
         disable_hyprland_logo   = true,
     },
 
@@ -172,7 +170,7 @@ hl.bind(mainMod .. " + A",         hl.dsp.exec_cmd("noctalia msg panel-toggle co
 hl.bind(mainMod .. " + ESCAPE",    hl.dsp.exec_cmd("noctalia msg panel-toggle session"))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("noctalia msg panel-toggle clipboard"))
 
--- fullscreen: SUPER+F maximizes (keeps waybar), SUPER+SHIFT+F covers everything
+-- fullscreen: SUPER+F maximizes (keeps the bar), SUPER+SHIFT+F covers everything
 hl.bind(mainMod .. " + F",         hl.dsp.window.fullscreen({ mode = "maximized" }))
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
 

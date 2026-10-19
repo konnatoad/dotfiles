@@ -35,12 +35,10 @@ grub
 gst-plugin-pipewire
 htop
 hyprland
-hyprpaper
 imagemagick
 imv
 iwd
 john
-kitty
 lib32-pipewire-jack
 libdvdcss
 libpulse
@@ -72,8 +70,8 @@ ntfs-3g
 nvidia-open-dkms
 nvidia-settings
 nvidia-utils
-obs-studio
 obsidian
+obs-studio
 openssh
 os-prober
 pavucontrol
@@ -81,6 +79,7 @@ pipewire
 pipewire-alsa
 pipewire-jack
 pipewire-pulse
+playerctl
 pnpm
 polkit-kde-agent
 poppler
@@ -92,7 +91,6 @@ qt5-wayland
 qt6-wayland
 reflector
 ripgrep
-rofi
 rust-analyzer
 rustup
 slurp
@@ -118,12 +116,12 @@ tree-sitter-rust
 ttf-jetbrains-mono-nerd
 unrar
 unzip
+upower
 uwsm
 vesktop-bin
 vial-appimage
 vim
 vlc
-waybar
 webkit2gtk-4.1
 wget
 wine
@@ -131,7 +129,6 @@ wireless_tools
 wireplumber
 wl-clipboard
 woff2-font-awesome
-wofi
 wpa_supplicant
 wtf
 xdg-desktop-portal-gtk

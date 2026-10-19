@@ -2,3 +2,5 @@
 [binds]
 z=zoom actual
 f=scaling full
+<Right> = next; exec IMV_MANIFEST="$IMV_MANIFEST" IMV_LOG_FILE="$IMV_LOG_FILE" ~/.local/bin/imv-log-key.sh press Right
+<Left> = prev; exec IMV_MANIFEST="$IMV_MANIFEST" IMV_LOG_FILE="$IMV_LOG_FILE" ~/.local/bin/imv-log-key.sh press Left

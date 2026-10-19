@@ -62,20 +62,108 @@ urar() {
 # Image viewing functions
 rimv() {
   local dir=${1:-.}
-  find "$dir" \
-    -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.heic' -o -iname '*jfif' \) -print0 |
-    sort -Rz | xargs -0 imv -f
+  local tmp
+
+  tmp=$(mktemp -d) || return 1
+
+  python3 - "$dir" "$tmp" <<'PY'
+import os
+import sys
+import random
+from pathlib import Path
+
+root = Path(sys.argv[1])
+tmp = Path(sys.argv[2])
+
+exts = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".jfif"}
+
+files = []
+for base, _, names in os.walk(root):
+    for name in names:
+        p = Path(base) / name
+        if p.suffix.lower() in exts:
+            files.append(p.resolve())
+
+random.shuffle(files)
+
+for i, p in enumerate(files, 1):
+    link = tmp / f"{i:06d}{p.suffix.lower()}"
+    try:
+        link.symlink_to(p)
+    except FileExistsError:
+        pass
+PY
+
+  imv -f -- "$tmp"/*
+  local status=$?
+  rm -rf -- "$tmp"
+  return $status
 }
 
 simv() {
   local dir=${1:-.}
-  find "$dir" \
-    -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.heic' -o -iname '*jfif' \) -printf "%s %p\n" |
-    sort -nr | cut -d' ' -f2- |
-    xargs -d '\n' imv -f
+  local tmp manifest logfile
+
+  tmp=$(mktemp -d) || return 1
+  manifest="$tmp/imv-manifest.txt"
+  logfile="$tmp/imv-debug.log"
+
+  python3 - "$dir" "$manifest" <<'PY'
+import os
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+manifest = Path(sys.argv[2])
+
+exts = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".jfif"}
+
+files = []
+for base, _, names in os.walk(root):
+    for name in names:
+        p = Path(base) / name
+        if p.suffix.lower() in exts:
+            try:
+                files.append((p.stat().st_size, str(p.resolve())))
+            except OSError:
+                pass
+
+files.sort(key=lambda x: x[0], reverse=True)
+
+with open(manifest, "w", encoding="utf-8") as f:
+    for _, path in files:
+        f.write(path + "\n")
+PY
+
+  [[ -s "$manifest" ]] || { rm -rf -- "$tmp"; return 1; }
+
+  : > "$logfile"
+
+  echo "[simv] manifest: $manifest"
+  echo "[simv] log file: $logfile"
+
+  IMV_MANIFEST="$manifest" \
+  IMV_LOG_FILE="$logfile" \
+  IMV_LOG_EVENT="startup" \
+  IMV_LOG_KEY="none" \
+  python3 ~/.local/bin/imv-log-window.py
+
+  IMV_MANIFEST="$manifest" \
+  IMV_LOG_FILE="$logfile" \
+  imv -f -- "${(@f)$(<"$manifest")}"
+
+  local rc=$?
+
+  echo
+  echo "[simv] session log saved to: $logfile"
+  [[ -f "$logfile" ]] && cat "$logfile"
+
+  rm -rf -- "$tmp"
+  return $rc
 }
 
 export TERM=xterm-256color
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
+export PATH="$HOME/.local/bin:$PATH"

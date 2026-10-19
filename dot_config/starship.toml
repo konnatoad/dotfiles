@@ -13,21 +13,20 @@ success_symbol = "[󰁕](green) "
 error_symbol   = "[󰁕](red) "   # keep two spaces so alignment matches success
 
 ###############################################################################
-# 2)  DIRECTORY  (cyan)
+# 2)  DIRECTORY  (default colour, bold)
 ###############################################################################
 [directory]
-format = "[$path](cyan) "        # trailing space after the directory name
+format = "[$path](bold) "        # trailing space after the directory name
 truncation_length = 1            # show repo name only (no long paths)
 truncate_to_repo  = false
 
 ###############################################################################
-# 3)  GIT BRANCH  →  git:(master)
-#       • “git:” stays default colour
+# 3)  GIT BRANCH  →  git:(master), oh-my-zsh robbyrussell style
+#       • “git:(” and “)” in blue
 #       • branch name in red
-#       • parentheses default colour
 ###############################################################################
 [git_branch]
-format = "git:([\\($branch\\)](red)) "
+format = "[git:\\(](bold blue)[$branch](red)[\\)](blue) "
 style  = ""                      # prevent Starship from recolouring the whole bit
 
 ###############################################################################
@@ -45,5 +44,5 @@ exit 1
 """
 command = "echo ✘"
 format  = "[$output]($style) "
-style   = "yellow"
+style   = "red"
 shell   = ["bash", "--noprofile", "--norc"]

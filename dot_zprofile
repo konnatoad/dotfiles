@@ -2,3 +2,4 @@
 if [[ -f ~/.zshrc ]]; then
   source ~/.zshrc
 fi
+export EDITOR=nvim
