@@ -2,10 +2,10 @@
     "autoUpdate": true,
     "autoUpdateNotification": true,
     "useQuickCss": true,
-    "themeLinks": [],
-    "enabledThemes": [
-        "monotheme.theme.css"
+    "themeLinks": [
+        "https://raw.githubusercontent.com/konnatoad/dotfiles/refs/heads/main/dot_config/vesktop/themes/monotheme.theme.css"
     ],
+    "enabledThemes": [],
     "enableReactDevtools": false,
     "frameless": false,
     "transparent": true,
@@ -688,7 +688,8 @@
             "multiplier": 2
         },
         "WhoReacted": {
-            "enabled": true
+            "enabled": true,
+            "clickableAvatars": true
         },
         "XSOverlay": {
             "enabled": false
@@ -796,7 +797,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1792358160419
+        "settingsSyncVersion": 1792420539712
     },
     "eagerPatches": false,
     "uiElements": {

@@ -14,5 +14,8 @@ xkb_symbols "basic" {
     // AltGr + ¨  ->  ~ right away (not a dead key, no space needed)
     key <AD12> { [ dead_diaeresis, dead_circumflex, asciitilde, dead_macron ] };
 
+    // Shift + ´  ->  ` right away (not a dead key, no space needed)
+    key <AE12> { [ dead_acute, grave, dead_cedilla, dead_ogonek ] };
+
     include "level3(ralt_switch)"
 };

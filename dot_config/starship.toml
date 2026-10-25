@@ -2,8 +2,8 @@
 # GLOBAL LAYOUT: arrow → dir → git branch → git status
 ###############################################################################
 add_newline = false
-scan_timeout = 200   # ms; custom.git_dirty scans cwd, ~ has an sshfs mount that can be slow
-format = """$character$directory$git_branch${custom.git_dirty}"""
+scan_timeout = 200   # ms; ~ has an sshfs mount that can be slow to scan
+format = """$character$directory$git_branch$git_status"""
 
 ###############################################################################
 # 1)  ARROW  (green = last cmd OK, red = last cmd failed)
@@ -29,20 +29,4 @@ truncate_to_repo  = false
 format = "[git:\\(](bold blue)[$branch](red)[\\)](blue) "
 style  = ""                      # prevent Starship from recolouring the whole bit
 
-###############################################################################
-# 4)  GIT DIRTY  →  one ✘ no matter how many kinds of changes there are
-#       (git_status's $all_status prints one symbol per kind, e.g. ✘ ✘)
-#       dirty = uncommitted/untracked changes, stash, or ahead/behind upstream
-###############################################################################
-[custom.git_dirty]
-when = """
-git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 1
-[ -n "$(git status --porcelain 2>/dev/null | head -n1)" ] && exit 0
-git rev-parse -q --verify refs/stash >/dev/null && exit 0
-[ -n "$(git rev-list '@{u}...HEAD' 2>/dev/null | head -n1)" ] && exit 0
-exit 1
-"""
-command = "echo ✘"
-format  = "[$output]($style) "
-style   = "red"
-shell   = ["bash", "--noprofile", "--norc"]
+# 4)  GIT STATUS  →  Starship's built-in git_status with its default symbols

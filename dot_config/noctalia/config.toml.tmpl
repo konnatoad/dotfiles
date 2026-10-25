@@ -1,0 +1,15 @@
+# hand-written base config; GUI changes land in ~/.local/state/noctalia/settings.toml
+
+[theme.templates]
+builtin_ids = ["ghostty"]
+
+[calendar.account.icloud]
+type = "caldav"
+provider = "icloud"
+username = "{{ .calendar.apple_id }}"
+credential_source = "file"
+password_file = "/home/konna/.local/share/noctalia-secrets/icloud"
+
+[calendar.account.work]
+type = "ics"
+server_url = "{{ .calendar.outlook_ics }}"

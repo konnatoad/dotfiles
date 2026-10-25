@@ -6,6 +6,9 @@ if [[ -f /usr/bin/fastfetch ]]; then
   fastfetch
 fi
 
+# Prompt theme — same as the server
+ZSH_THEME="robbyrussell"
+
 # Plugins to load
 plugins=(
   git
@@ -164,6 +167,4 @@ PY
 
 export TERM=xterm-256color
 
-# Initialize Starship prompt
-eval "$(starship init zsh)"
 export PATH="$HOME/.local/bin:$PATH"
