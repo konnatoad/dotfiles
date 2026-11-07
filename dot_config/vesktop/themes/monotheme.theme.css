@@ -1,7 +1,7 @@
 /**
  * @name monotheme
  * @author konna
- * @version 2.0.0
+ * @version 2.0.1
  * @description fluent's layout with the rest of the desktop's feel on top: terminal type, blue accent,
  * ~/ section titles, and the desktop wallpaper as fluent's blurred acrylic background.
  */
@@ -63,13 +63,13 @@
    remove it so the transparent window shows through. alphas stack:
    backdrop 0.5 + panels 0.7 -> 1 - 0.5*0.3 = 0.85 (no blur on this monitor, so a touch more see-through
    than spotify's 0.9 to actually be noticeable) */
-.theme-dark [class*="bg__960e4"],
-.theme-dark [class*="bg__960e4"]::before {
+.theme-dark [class*="bg_Fd0FEH"],
+.theme-dark [class*="bg_Fd0FEH"]::before {
   background: none !important;
   filter: none !important;
 }
-.theme-dark [class*="content_f75fb0"],
-.theme-dark main[class*="chatContent_"] {
+.theme-dark [class*="content_z_gUBg"],
+.theme-dark [class*="chatContent_"] {
   background: transparent !important;
 }
 
@@ -79,28 +79,28 @@
   --background-modifier-selected: rgba(255, 255, 255, 0.08) !important;
   --background-message-hover: rgba(255, 255, 255, 0.04) !important;
 }
-.theme-dark li[class*="messageListItem_"] > [class*="message__"]:hover:not([class*="mentioned_"]) {
+.theme-dark li[class*="messageListItem_"] > [class*="message_SY_P2T"]:hover:not([class*="mentioned_"]) {
   background: rgba(255, 255, 255, 0.04) !important;
 }
 
 /* ---------- spotify structure: floating outlined panels with gaps over a near-black backdrop ---------- */
-.theme-dark [class*="content__5e434"] {
+.theme-dark [class*="content_pog62O"] {
   background: rgba(10, 10, 10, 0.5) !important;
   padding: 0 10px 10px !important;
   gap: 10px !important;
   box-sizing: border-box;
 }
-.theme-dark [class*="sidebar__5e434"] {
+.theme-dark [class*="sidebar_pog62O"] {
   gap: 10px !important;
   overflow: visible !important;
 }
-.theme-dark [class*="sidebar__5e434"]::after {
+.theme-dark [class*="sidebar_pog62O"]::after {
   display: none !important; /* fluent's divider line, the gap does that job now */
 }
-.theme-dark nav[class*="guilds__"],
-.theme-dark [class*="sidebarList__"],
+.theme-dark [class*="guilds_pog62O"],
+.theme-dark [class*="sidebarList_pog62O"],
 .theme-dark [class*="chat_"]:has(> [class*="subtitleContainer_"]),
-.theme-dark section[class*="panels__"] {
+.theme-dark [class*="panels_pog62O"] {
   background: rgba(19, 19, 19, 0.7) !important;
   border-radius: 10px !important;
   outline: 1px solid var(--konna-line);
@@ -109,13 +109,13 @@
 }
 /* the user/player panel floats over the end of the channel/dm list; keep it nearly solid
    so list rows don't show through it */
-.theme-dark section[class*="panels__"] {
+.theme-dark [class*="panels_pog62O"] {
   background: #131313 !important;
   z-index: 100 !important; /* the list rows were being drawn on top of it */
 }
 /* chat, header and member list share the chat panel; members get a thin divider */
-.theme-dark [class*="content_f75fb0"],
-.theme-dark main[class*="chatContent_"],
+.theme-dark [class*="content_z_gUBg"],
+.theme-dark [class*="chatContent_"],
 .theme-dark section[class*="title_"][aria-label="Channel header"],
 .theme-dark [class*="container_"]:has(> aside[class*="membersWrap_"]),
 .theme-dark aside[class*="membersWrap_"],
