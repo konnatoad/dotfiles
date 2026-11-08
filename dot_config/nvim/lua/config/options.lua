@@ -8,6 +8,7 @@ opt.scrolloff = 8 -- keep context above/below the cursor
 opt.sidescrolloff = 8
 opt.wrap = false
 opt.cursorline = true
+opt.cursorlineopt = "number"
 opt.relativenumber = true
 
 opt.winborder = "rounded" -- rounded borders on every floating window

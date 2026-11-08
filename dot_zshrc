@@ -26,6 +26,7 @@ alias vi='nvim'
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias g='git'
+kafka() { (cd ~/projects/kafka-cli && ./target/release/kafka-cli "$@") }
 
 # Environment variables
 export OPENER=imv

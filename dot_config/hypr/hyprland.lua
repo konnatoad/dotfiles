@@ -9,7 +9,7 @@ local side = "desc:Lenovo Group Limited LEN P27q-10 0x01010101"
 hl.monitor({ output = vert, mode = "1920x1080@143.98", position = "-1080x-420", scale = 1, transform = 3 })
 hl.workspace_rule({ workspace = "2", monitor = vert })
 
-hl.monitor({ output = main, mode = "1920x1080@270.00", position = "0x0", scale = 1 })
+hl.monitor({ output = main, mode = "1920x1080@239.76", position = "0x0", scale = 1 })
 hl.workspace_rule({ workspace = "1", monitor = main, default = true })
 
 hl.monitor({ output = side, mode = "2560x1440@59.95", position = "1920x-180", scale = 1 })
@@ -19,6 +19,7 @@ local terminal = "ghostty"
 local fileManager = "ghostty -e yazi"
 local menu = "noctalia msg panel-toggle launcher"
 local browser = "zen-browser"
+local mail = "ghostty -e aerc"
 
 hl.on("hyprland.start", function()
 	hl.exec_cmd("hyprctl dispatch 'hl.dsp.focus({ workspace = 1 })'")
@@ -67,7 +68,6 @@ hl.config({
 			enabled = true,
 			size = 5,
 			passes = 2,
-			brightness = 0.75, -- darken what shows through so text on top stays readable
 			vibrancy = 0.1696,
 		},
 	},
@@ -149,13 +149,26 @@ hl.window_rule({
 	opacity = "1.0 override 1.0 override",
 })
 
+-- forcing apps that want to open maximized to tile like everything else
+hl.window_rule({
+	name = "suppress-maximize-events",
+	match = { class = ".*" },
+	suppress_event = "maximize",
+})
+-- x11 apps make invisible helper window while dragging, must never take focus
+hl.window_rule({
+	name = "fix-xwayland-drags",
+	match = { class = "^$", title = "^$", xwayland = true, float = true, fullscreen = false, pin = false },
+	no_focus = true,
+})
+
 local mainMod = "SUPER"
 
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 
-hl.bind(mainMod .. " + M", hl.dsp.exit())
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exit())
 
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 
@@ -178,6 +191,8 @@ hl.bind(mainMod .. " + ALT + J", hl.dsp.layout("togglesplit"))
 
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd(mail))
+
 hl.bind("CTRL + Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh area"))
 
 hl.bind("ALT + Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh full"))
@@ -186,6 +201,10 @@ hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + l", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + k", hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + j", hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + SHIFT + h", hl.dsp.window.move({ direction = "left" }))
+hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.move({ direction = "right" }))
+hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.move({ direction = "up" }))
+hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.move({ direction = "down" }))
 
 for i = 1, 10 do
 	local key = i % 10 -- 10 maps to key 0
