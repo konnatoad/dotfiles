@@ -11,8 +11,8 @@ xkb_symbols "basic" {
     key <AB09> { [ period, colon,      greater, NoSymbol ] };
     key <AB10> { [ minus,  underscore, bar,     NoSymbol ] };
 
-    // AltGr + ¨  ->  ~ right away (not a dead key, no space needed)
-    key <AD12> { [ dead_diaeresis, dead_circumflex, asciitilde, dead_macron ] };
+    // Shift + ¨  ->  ^ and AltGr + ¨  ->  ~ right away (not dead keys, no space needed)
+    key <AD12> { [ dead_diaeresis, asciicircum, asciitilde, dead_macron ] };
 
     // Shift + ´  ->  ` right away (not a dead key, no space needed)
     key <AE12> { [ dead_acute, grave, dead_cedilla, dead_ogonek ] };
