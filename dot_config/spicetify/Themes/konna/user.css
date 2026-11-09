@@ -2,6 +2,12 @@
    text only, player bar on top (like noctalia), library left, content right,
    everything else hidden and reachable from the keyboard (konna-keys.js, press ?) */
 
+/* spotify 1.3.8 hashes most class names (they change every update), so this
+   hooks onto what stays: data-testid, aria-label, the few plain class names
+   left (main-view-container, Root__right-sidebar-peek, main-topBar-*,
+   main-entityHeader-*, x-progressBar-*), and structure via :has().
+   The main grid is .Root's child that holds the now-playing bar. */
+
 /* ---------- type ---------- */
 :root {
   --font-family: "JetBrainsMono Nerd Font", monospace !important;
@@ -18,10 +24,10 @@ input,
 
 /* ---------- layout: player on top, then search line, then library | content ---------- */
 .Root,
-.Root__top-container {
+.Root > div:has(> div > [data-testid="now-playing-bar"]) {
   background-color: #0a0a0a !important;
 }
-.Root__top-container {
+.Root > div:has(> div > [data-testid="now-playing-bar"]) {
   grid-template-areas:
     "now-playing-bar now-playing-bar now-playing-bar"
     "top-banner top-banner top-banner"
@@ -31,10 +37,11 @@ input,
   padding: 10px !important;
   gap: 10px !important;
 }
-.Root__nav-bar,
-.Root__main-view,
-.Root__right-sidebar,
-.Root__now-playing-bar {
+/* the four panes */
+.Root > div > div:has(> nav[aria-label="Main"]),
+.Root > div > div:has(> .main-view-container),
+.Root__right-sidebar-peek,
+.Root > div > div:has(> [data-testid="now-playing-bar"]) {
   border-radius: 10px !important;
   outline: 1px solid var(--kb-line);
   outline-offset: -1px;
@@ -47,97 +54,93 @@ img,
 .main-entityHeader-imageContainer,
 .main-entityHeader-imageContainerNew,
 .main-trackList-rowImage,
-.main-nowPlayingWidget-coverArtContainer,
 .main-cardImage-imageWrapper,
 [data-testid="cover-art-button"],
 [data-testid="entity-image"],
-.Root__right-sidebar video,
-.Root__right-sidebar canvas,
-.Root__right-sidebar [style*="background-image"] {
+/* the empty boxes covers sat in: library rows and the queue */
+nav[aria-label="Main"] [role="row"] :has(> * > img),
+.Root__right-sidebar-peek :has(> * > img),
+.Root__right-sidebar-peek video,
+.Root__right-sidebar-peek canvas,
+.Root__right-sidebar-peek [style*="background-image"] {
   display: none !important;
 }
 
 /* ---------- player bar (top) ---------- */
-.Root__now-playing-bar {
+.Root > div > div:has(> [data-testid="now-playing-bar"]) {
   margin: 0 !important;
   /* left room for spotify's native "..." window menu, which is drawn over this corner */
   padding: 4px 14px 4px 44px !important;
   overflow: hidden;
 }
-.main-nowPlayingBar-nowPlayingBar {
+[data-testid="now-playing-bar"] {
   background: transparent !important;
   min-height: 0 !important;
   height: 48px !important;
+  padding: 0 !important;
 }
-.main-nowPlayingBar-container {
-  min-height: 0 !important;
-}
-/* one line instead of spotify's stacked buttons-over-seekbar, which overlapped in a slim bar:
-   [track]  ⇄ ⏮ ⏯ ⏭ ↻  0:42 ━━━━━━━━━○──── 3:10  [volume] */
-.main-nowPlayingBar-nowPlayingBar {
+/* one line: [track]  ⇄ ⏮ ⏯ ⏭ ↻  0:42 ━━━━━━━━━○──── 3:10  [volume] */
+[data-testid="now-playing-bar"] > div {
   display: flex !important;
   align-items: center !important;
   gap: 24px !important;
+  height: 100% !important;
+  padding: 0 !important;
 }
-.main-nowPlayingBar-left {
+[data-testid="now-playing-bar"] > div > :nth-child(1) {
   flex: 0 0 260px !important;
   min-width: 0 !important;
   width: auto !important;
 }
-.main-nowPlayingBar-center {
+[data-testid="now-playing-bar"] > div > :nth-child(2) {
   flex: 1 1 auto !important;
   max-width: none !important;
   width: auto !important;
 }
-.main-nowPlayingBar-right {
+[data-testid="now-playing-bar"] > div > :nth-child(3) {
   flex: 0 0 200px !important;
   min-width: 0 !important;
   width: auto !important;
 }
-.player-controls {
+[data-testid="player-controls"] {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
   gap: 18px !important;
   width: 100% !important;
 }
-/* spotify makes both halves of the button group flex:1, which ate the whole bar */
-.player-controls__buttons,
-.player-controls__left,
-.player-controls__right {
+[data-testid="general-controls"] {
   margin: 0 !important;
   flex: 0 0 auto !important;
   width: auto !important;
 }
-.playback-bar {
+[data-testid="player-controls"] > :last-child {
   flex: 1 1 auto !important;
   width: auto !important;
 }
 
 /* only transport, progress and volume stay; the rest is on the keyboard */
-.Root__now-playing-bar [aria-label="Add to playlist"],
-.Root__now-playing-bar [aria-label="Connect to a device"],
+[data-testid="now-playing-bar"] [aria-label="Add to playlist"],
+[data-testid="now-playing-bar"] [aria-label="Connect to a device"],
 [data-testid="pip-toggle-button"],
 [data-testid="fullscreen-mode-button"],
 [data-testid="lyrics-button"],
 [data-testid="control-button-queue"],
-[data-testid="control-button-npv"],
-.main-nowPlayingWidget-actionButtonWrapper,
-.main-nowPlayingWidget-plusButtonWrapper {
+[data-testid="control-button-npv"] {
   display: none !important;
 }
 /* play buttons: outlined instead of a filled white/blue disc */
 [data-testid="control-button-playpause"],
 [data-testid="control-button-playpause"] > span,
-.main-actionBar-ActionBarPlayButtonContainer button,
-.main-actionBar-ActionBarPlayButtonContainer button > span {
+[data-testid="action-bar-row"] button[class*="button-primary"],
+[data-testid="action-bar-row"] button[class*="button-primary"] > span {
   background-color: transparent !important;
   color: var(--spice-button) !important;
   transform: none !important;
   box-shadow: none !important;
 }
 [data-testid="control-button-playpause"],
-.main-actionBar-ActionBarPlayButtonContainer button > span {
+[data-testid="action-bar-row"] button[class*="button-primary"] > span {
   outline: 1px solid var(--kb-line) !important;
   border-radius: 50% !important;
 }
@@ -147,47 +150,50 @@ img,
 }
 /* unplayed part: grey. the waveform extension masks the bar into the waveform shape
    (track stays transparent so no box shows behind it) */
-.playback-bar .x-progressBar-progressBarBg {
+[data-testid="playback-progressbar"] .x-progressBar-progressBarBg {
   background-color: transparent !important;
   --bg-color: var(--spice-misc);
 }
-.Root__now-playing-bar [data-testid="volume-bar"] .x-progressBar-progressBarBg {
+/* glide between spotify's once-a-second updates instead of stepping;
+   konna-keys.js marks seeks and new tracks with data-konna-jump so those land at once */
+[data-testid="playback-progressbar"] .x-progressBar-fillColor {
+  transition: transform var(--progress-bar-duration, 1000ms) linear !important;
+}
+[data-testid="playback-progressbar"] .progress-bar[data-konna-jump] .x-progressBar-fillColor {
+  transition: none !important;
+}
+[data-testid="volume-bar"] .x-progressBar-progressBarBg {
   background-color: var(--spice-misc) !important;
 }
 
 /* ---------- search line: just the input, like a command line ---------- */
-.Root__globalNav {
+.Root > div > div:has(> div > div > button[aria-label="Home"]) {
   background: transparent !important;
   padding: 0 !important;
   margin: 0 !important;
   height: 36px !important;
   min-height: 0 !important;
-  grid-area: global-nav !important;
 }
-.main-globalNav-historyButtonsContainer,
-.main-globalNav-contentRight,
-.main-globalNav-searchInputKBDWrapper,
-.Root__globalNav [aria-label="Home"],
-.Root__globalNav [aria-label="Marketplace"],
-.Root__globalNav [aria-label="Statistics"],
-.Root__globalNav [aria-label="Browse"],
-.Root__globalNav [aria-label="Search"],
-.Root__globalNav [aria-label="playlist-stats"],
-.Root__globalNav [aria-label="What's New"],
-.Root__globalNav [aria-label="Listening activity"],
-[data-testid="user-widget-link"] {
+/* back/forward and the marketplace/stats links on the left, news and friends on the right */
+.Root > div > div:has(> div > div > button[aria-label="Home"]) > div:has(button[aria-label="Go back"]),
+.Root > div > div:has(> div > div > button[aria-label="Home"]) > div:has(button[aria-label="What's New"]),
+.Root > div > div:has(> div > div > button[aria-label="Home"]) button[aria-label="Home"],
+.Root > div > div:has(> div > div > button[aria-label="Home"]) form > div:not(:has(input)) {
   display: none !important;
 }
-.main-globalNav-searchSection,
-.main-globalNav-searchContainer,
-.main-globalNav-searchInputSection,
-.main-globalNav-searchInputContainer,
-.main-globalNav-searchInputWrapper {
-  max-width: none !important;
+.Root > div > div:has(> div > div > button[aria-label="Home"]) > div,
+.Root > div > div:has(> div > div > button[aria-label="Home"]) div:has(> button[aria-label="Home"]),
+.Root > div > div:has(> div > div > button[aria-label="Home"]) div:has(> form),
+.Root > div > div:has(> div > div > button[aria-label="Home"]) form {
+  position: static !important;
+  flex: 1 1 auto !important;
   width: 100% !important;
+  max-width: none !important;
+  height: 36px !important;
   margin: 0 !important;
+  padding: 0 !important;
 }
-.Root__globalNav input {
+.Root > div > div:has(> div > div > button[aria-label="Home"]) input {
   height: 34px !important;
   border-radius: 10px !important;
   background-color: var(--spice-main) !important;
@@ -195,45 +201,47 @@ img,
   outline: 1px solid var(--kb-line) !important;
   box-shadow: none !important;
   padding-left: 14px !important;
+  padding-right: 14px !important;
   color: var(--spice-text) !important;
 }
-.Root__globalNav input:focus {
+.Root > div > div:has(> div > div > button[aria-label="Home"]) input:focus {
   outline-color: var(--spice-button) !important;
 }
-.Root__globalNav input::placeholder {
+.Root > div > div:has(> div > div > button[aria-label="Home"]) input::placeholder {
   color: var(--spice-subtext) !important;
-}
-.Root__globalNav svg {
-  display: none !important; /* magnifier and other icons in the search line */
 }
 
 /* ---------- library (left) ---------- */
-.Root__nav-bar [aria-label="Create"],
-.Root__nav-bar [aria-label="Expand Your Library"],
-.Root__nav-bar .main-playButton-PlayButton {
+nav[aria-label="Main"] [aria-label="Create"],
+nav[aria-label="Main"] [aria-label="Expand Your Library"],
+nav[aria-label="Main"] .main-playButton-PlayButton {
   display: none !important;
 }
-.Root__nav-bar h1,
-.Root__nav-bar h2 {
+nav[aria-label="Main"] h1,
+nav[aria-label="Main"] h2 {
   text-transform: lowercase !important;
   font-weight: 500 !important;
 }
-.main-yourLibraryX-libraryContainer [role="row"] {
+nav[aria-label="Main"] [role="row"] {
   border-radius: 6px !important;
 }
-.main-yourLibraryX-libraryContainer [role="row"][aria-selected="true"],
-.main-yourLibraryX-libraryContainer [role="row"]:hover {
+nav[aria-label="Main"] [role="row"][aria-selected="true"],
+nav[aria-label="Main"] [role="row"]:hover {
   background-color: var(--spice-highlight) !important;
 }
 
 /* ---------- content (right) ---------- */
 /* spotify tints headers with the artwork's color via inline styles: stay monochrome */
 .main-topBar-background,
-.Root__main-view div[style*="background-color"],
-.Root__right-sidebar div[style*="background-color"] {
+.main-view-container div[style*="background-color"],
+.Root__right-sidebar-peek div[style*="background-color"] {
   background-color: var(--spice-main) !important;
   --background-base: var(--spice-main) !important;
   background-image: none !important;
+}
+/* genre chips under a playlist's title */
+[aria-label$="Filter Tags"] {
+  display: none !important;
 }
 .main-entityHeader-container,
 .main-entityHeader-contentWrapper {

@@ -16,8 +16,8 @@
 
   let scrollEl = null;
   function scroller() {
-    if (scrollEl?.isConnected && scrollEl.closest(".Root__main-view")) return scrollEl;
-    const mv = $(".Root__main-view");
+    if (scrollEl?.isConnected && scrollEl.closest(".main-view-container")) return scrollEl;
+    const mv = $(".main-view-container");
     if (!mv) return null;
     scrollEl = [...mv.querySelectorAll("div")].find((el) => {
       const oy = getComputedStyle(el).overflowY;
@@ -39,7 +39,7 @@
 
   // opens the queue panel on its "Recently played" tab
   function history() {
-    const tab = () => [...document.querySelectorAll(".Root__right-sidebar button, .Root__right-sidebar [role=tab]")].find((b) => /recently played/i.test(b.textContent));
+    const tab = () => [...document.querySelectorAll(".Root__right-sidebar-peek button, .Root__right-sidebar-peek [role=tab]")].find((b) => /recently played/i.test(b.textContent));
     if (!tab()) clickTestId("control-button-queue");
     setTimeout(() => tab()?.click(), 250);
   }
@@ -135,7 +135,8 @@
   // rows are virtualized and get recycled while scrolling, so the cursor is { grid, aria-rowindex }, not an element.
   // a page can hold several lists (a playlist and "recommended" below it), each numbering its rows from the top,
   // so the cursor remembers which list it's in and j/k step from one list into the next.
-  const panes = { lib: ".Root__nav-bar", main: ".Root__main-view" };
+  // spotify 1.3.8 hashes its layout classes; these names stay
+  const panes = { lib: 'nav[aria-label="Main"]', main: ".main-view-container" };
   const cur = { pane: "lib", lib: null, main: null };
 
   const rindex = (r) => +r.getAttribute("aria-rowindex");
@@ -246,7 +247,7 @@
   }
   // the collapsed library is covers only, which is blank without artwork: always bring the names back
   function uncollapseLibrary() {
-    const btn = $('.Root__nav-bar [aria-label="Open Your Library"]');
+    const btn = $('nav[aria-label="Main"] [aria-label="Open Your Library"]');
     btn?.click();
     return !!btn;
   }
@@ -350,13 +351,13 @@
 
   // ---------- spotify's own search (g /) ----------
   function spotifySearch() {
-    const input = $(".Root__globalNav input");
+    const input = $("input[data-top-bar-search]");
     if (!input) return go("/search");
     input.focus();
     input.select();
   }
   const setPlaceholder = () => {
-    const input = $(".Root__globalNav input");
+    const input = $("input[data-top-bar-search]");
     if (input && input.placeholder !== "g/ search") input.placeholder = "g/ search";
   };
 
@@ -654,10 +655,35 @@
     if (++uncollapseTries >= 30) clearInterval(uncollapseTimer);
   }, 500);
 
+  // ---------- smooth progress bar ----------
+  // user.css glides the fill between spotify's once-a-second updates. a seek, a drag or a
+  // new track would glide too, so an update that isn't a normal tick gets data-konna-jump
+  // and lands at once
+  let bar = null;
+  let last = null; // { pct, t } of the previous update
+  function watchBar() {
+    const b = $('[data-testid="playback-progressbar"] .progress-bar');
+    if (!b || b === bar) return;
+    bar = b;
+    last = null;
+    new MutationObserver(() => {
+      const pct = parseFloat(b.style.getPropertyValue("--progress-bar-transform"));
+      const t = performance.now();
+      const dur = S.Player.getDuration();
+      if (last && dur > 0) {
+        const expected = ((t - last.t) / dur) * 100;
+        b.toggleAttribute("data-konna-jump", Math.abs(pct - last.pct - expected) > (1500 / dur) * 100);
+      }
+      last = { pct, t };
+    }).observe(b, { attributes: true, attributeFilter: ["style"] });
+  }
+  watchBar();
+
   setPlaceholder();
   // repaint too: spotify re-renders rows and drops the cursor class
   new MutationObserver(() => {
     setPlaceholder();
+    watchBar();
     schedulePaint();
   }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "aria-rowindex"] });
 })();
