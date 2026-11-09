@@ -6,7 +6,7 @@
         "https://raw.githubusercontent.com/konnatoad/dotfiles/refs/heads/main/dot_config/vesktop/themes/monotheme.theme.css"
     ],
     "enabledThemes": [],
-    "enableReactDevtools": false,
+    "enableReactDevtools": true,
     "frameless": false,
     "transparent": true,
     "winCtrlQ": false,
@@ -564,7 +564,8 @@
         "ShowHiddenChannels": {
             "enabled": true,
             "showMode": 0,
-            "hideUnreads": true
+            "hideUnreads": true,
+            "defaultAllowedUsersAndRolesDropdownState": true
         },
         "ShowHiddenThings": {
             "enabled": true,
@@ -585,7 +586,8 @@
             "enabled": true,
             "isEnabled": true,
             "showIcon": true,
-            "contextMenu": true
+            "contextMenu": true,
+            "showTypingIn": ""
         },
         "SortFriendRequests": {
             "enabled": false
@@ -722,9 +724,6 @@
         "HideMedia": {
             "enabled": false
         },
-        "ExpressionCloner": {
-            "enabled": true
-        },
         "WebRichPresence (arRPC)": {
             "enabled": false
         },
@@ -785,6 +784,18 @@
         },
         "NoticesAPI": {
             "enabled": true
+        },
+        "ExpressionManager": {
+            "enabled": true
+        },
+        "DirectFileDownload": {
+            "enabled": false
+        },
+        "JumpToTop": {
+            "enabled": false
+        },
+        "MutedServersActivityBadge": {
+            "enabled": false
         }
     },
     "notifications": {
@@ -797,7 +808,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1792420539712
+        "settingsSyncVersion": 1794151776968
     },
     "eagerPatches": false,
     "uiElements": {
