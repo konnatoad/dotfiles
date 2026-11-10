@@ -553,7 +553,7 @@
             "enabled": false
         },
         "ShikiCodeblocks": {
-            "enabled": false
+            "enabled": true
         },
         "ShowAllMessageButtons": {
             "enabled": false
@@ -635,7 +635,7 @@
             "showAvatars": true
         },
         "Unindent": {
-            "enabled": false
+            "enabled": true
         },
         "UnlockedAvatarZoom": {
             "enabled": false
@@ -808,7 +808,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1794151776968
+        "settingsSyncVersion": 1794337460948
     },
     "eagerPatches": false,
     "uiElements": {
