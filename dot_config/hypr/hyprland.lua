@@ -18,7 +18,7 @@ hl.workspace_rule({ workspace = "3", monitor = side })
 local terminal = "ghostty"
 local fileManager = "ghostty -e yazi"
 local menu = "noctalia msg panel-toggle launcher"
-local browser = "zen-browser"
+local browser = "helium-browser"
 local mail = "ghostty -e aerc"
 
 hl.on("hyprland.start", function()
