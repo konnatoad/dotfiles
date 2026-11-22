@@ -132,6 +132,7 @@ hl.animation({ leaf = "workspacesOut", enabled = true, speed = 1.94, bezier = "a
 
 hl.device({ name = "vancer-vancer-akitsu-mouse-consumer-control-1", sensitivity = -1.0 })
 hl.device({ name = "vancer-vancer-akitsu-mouse-1", sensitivity = -1.0 })
+hl.device({ name = "vancer-vancer-akitsu-mouse", sensitivity = -1.0 })
 
 hl.device({ name = "apple-inc.-magic-trackpad", sensitivity = 0.2, accel_profile = "adaptive" })
 
