@@ -27,6 +27,9 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias g='git'
 kafka() { (cd ~/projects/kafka-cli && ./target/release/kafka-cli "$@") }
+# bomzh maintenance page on cloudflare: down = page on, up = page off
+bomzh-down() { (cd ~/projects/bomzh-maintenance && npx wrangler deploy --env live) }
+bomzh-up() { (cd ~/projects/bomzh-maintenance && npx wrangler delete --env live) }
 
 # Environment variables
 export OPENER=imv
@@ -169,3 +172,11 @@ PY
 export TERM=xterm-256color
 
 export PATH="$HOME/.local/bin:$PATH"
+
+eval "$(zoxide init zsh)"
+
+# >>> grok installer >>>
+export PATH="$HOME/.grok/bin:$PATH"
+fpath=(~/.grok/completions/zsh $fpath)
+autoload -Uz compinit && compinit -C
+# <<< grok installer <<<
