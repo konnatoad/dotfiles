@@ -83,6 +83,7 @@
       ["s", "shuffle", () => { S.Player.toggleShuffle(); toast(`shuffle ${S.Player.getShuffle() ? "on" : "off"}`); }],
       ["r", "repeat", () => { S.Player.toggleRepeat(); toast(["repeat off", "repeat all", "repeat one"][S.Player.getRepeat()] ?? "repeat"); }],
       ["y", "like / unlike track", () => { S.Player.toggleHeart(); setTimeout(() => toast(S.Player.getHeart() ? "liked" : "unliked"), 150); }],
+      ["q", "add song under cursor to queue", () => queueRow()],
     ]],
     ["move", [
       ["j / k", "cursor down / up", null],
@@ -244,6 +245,32 @@
     const ctx = P.History.location.pathname.match(/^\/(playlist|album)\/(\w+)/);
     if (ctx) S.Player.playUri(`spotify:${ctx[1]}:${ctx[2]}`, {}, { skipTo: { uri: track } });
     else S.Player.playUri(track);
+  }
+  // q: the song under the cursor goes to the end of the queue, nothing starts playing.
+  // no cursor in the list (mouse user): the row under the mouse instead
+  // spotify 1.3.8 rows carry no track link or uri in the markup; react keeps it in the
+  // props of the row's own component, two levels up (liked songs, playlists, artist pages)
+  function trackUri(r) {
+    const key = Object.keys(r).find((k) => k.startsWith("__reactFiber"));
+    for (let f = key && r[key], d = 0; f && d < 20; f = f.return, d++) {
+      const p = f.memoizedProps;
+      const uri = p?.uri ?? p?.item?.uri;
+      if (typeof uri === "string" && uri.startsWith("spotify:track:")) return uri;
+    }
+  }
+  async function queueRow() {
+    const r = (cur.pane === "main" && rowAt("main", cur.main)) || [...document.querySelectorAll('[role="row"]:hover')].at(-1);
+    const uri = r && trackUri(r);
+    if (!uri) return toast("no song here to queue");
+    // the row's play button is labelled "Play <song> by <artist>" ("Pause …" on the one playing)
+    const name = r.querySelector('button[aria-label^="Play "], button[aria-label^="Pause "]')?.getAttribute("aria-label").replace(/^(Play|Pause) /, "") || "song";
+    try {
+      if (S.addToQueue) await S.addToQueue([{ uri }]);
+      else await P.PlayerAPI.addToQueue([{ uri }]);
+      toast(`queued: ${name}`);
+    } catch {
+      toast("couldn't queue that");
+    }
   }
   // the collapsed library is covers only, which is blank without artwork: always bring the names back
   function uncollapseLibrary() {
