@@ -1,0 +1,18 @@
+/* close-window dialog, noctalia greys + the soft red from the palette */
+.alert .heading, .alert .title-2 { font-weight: 600; }
+.alert .body { color: #919191; }
+.alert button {
+  background: #262626;
+  color: #e2e2e2;
+  border: 1px solid #333333;
+  border-radius: 10px;
+  padding: 8px 18px;
+  box-shadow: none;
+}
+.alert button:hover { background: #303030; }
+.alert button.destructive-action {
+  background: rgba(243, 139, 168, 0.16);
+  color: #f38ba8;
+  border-color: rgba(243, 139, 168, 0.35);
+}
+.alert button.destructive-action:hover { background: rgba(243, 139, 168, 0.26); }
