@@ -18,3 +18,6 @@ palette = 2=#a6e3a1
 palette = 10=#bdf0b8
 palette = 4=#89b4fa
 palette = 12=#a7c6fc
+
+# gtk widget styling (close dialog)
+gtk-custom-css = gtk.css
